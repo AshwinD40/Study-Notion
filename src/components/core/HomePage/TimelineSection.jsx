@@ -31,47 +31,53 @@ const timeline = [
 const TimelineSection = () => {
   return (
     <div>
-        <div className=' flex flex-row gap-20 items-center '>
-                <div className=' flex flex-col w-[40%] gap-12 -ml-14'>
-                    {
-                        timeline.map((element, index) => {
-                            return (
-                                <div className=' flex flex-row gap-6' key={index}>
-
-                                    <div className='w-[50px] h-[50px] rounded-full justify-center bg-white flex items-center '>
-                                        <img src={element.Logo} alt='logo'/>
-                                    </div>
-                                    <div>
-                                        <h2 className=' font-semibold text-[18px]'>{element.heading}</h2>
-                                        <p>{element.Description}</p>
-                                    </div>
+        <div className=' flex flex-col lg:flex-row gap-20 mb-20 items-center '>
+            <div className=' flex flex-col lg:w-[45%] gap-14 lg:gap-3'>
+                {timeline.map((element, index) => {
+                    return (
+                        <div className=' flex flex-col lg:gap-3' key={index}>
+                            <div className=' flex gap-6' key={index}>
+                                <div className='w-[52px] h-[52px] rounded-full justify-center bg-white flex items-center shadow-[#00000012] shadow-[0_0_62px_0] '>
+                                    <img src={element.Logo} alt='logo'/>
                                 </div>
-                            )
-                        })
-                    }
-
+                                <div>
+                                    <h2 className=' font-semibold text-[18px]'>{element.heading}</h2>
+                                    <p className=' text-base'>{element.Description}</p>
+                                </div>
+                            </div>  
+                            <div
+                                className={` hidden ${
+                                    timeline.length - 1 === index 
+                                    ? "hidden" : "lg:block"
+                                    } h-14 border-dotted border-r border-richblue-100 bg-richblack-400/0 w-[26px]`}
+                            ></div> 
+                        </div>    
+                    );
+                })}
                 </div>
 
-                <div className=' relative  '>
-                    <div className='absolute mt-28  rounded-full h-[200px] w-full bg-blue-200 blur-3xl '></div>
+                <div className=' relative w-fit h-fit shadow-blue-200 shadow-[0px_0px_30px_0px]   '>
+                    <div className=' absolute lg:left-[50%]  lg:bottom-0 lg:translate-x-[-50%] lg:translate-y-[50%] bg-caribbeangreen-700 flex lg:flex-row  flex-col text-white uppercase py-5 gap-4 lg:gap-0 lg:py-10'>
+                        {/* Section 01 */}
+                        <div className=' flex gap-5 items-center lg:border-r border-caribbeangreen-300 px-7 lg:px-14'>
+                            <h1 className=' text-3xl font-bold w-[75px]'>10</h1>
+                            <h1 className=' text-sm text-caribbeangreen-300 w-[75px]'>
+                                years experience
+                            </h1>
+                        </div>
+                         {/* Section 02 */}
+                        <div className=' flex items-center  gap-5 px-7 lg:px-14'>
+                            <h1 className=' text-3xl font-bold w-[75px]'>250</h1>
+                            <h1 className=' text-sm text-caribbeangreen-300 w-[75px]'>
+                                Type of Courses
+                            </h1>
+                        </div>
+                    </div>
                     <img src={Timelineimg}
                         alt='timelineimg'
-                        className=' relative shadow-[15px_15px] shadow-white object-covor'
+                        className=' h-[400px] lg:h-fit shadow-[15px_15px_0px_0px] rounded-lg shadow-white object-covor'
                     />
-
-                    <div className=' absolute bg-caribbeangreen-700 flex flex-row text-white uppercase py-6 left-[50%] translate-x-[-50%] translate-y-[-50%]'>
-
-                        <div className=' flex flex-row gap-5 items-center border-r border-caribbeangreen-300 px-7'>
-                            <p className=' text-3xl font-bold'>10</p>
-                            <p className=' text-sm text-caribbeangreen-300'>years of<br/> experience</p>
-                        </div>
-                        
-                        <div className=' flex flex-row items-center gap-5 px-7'>
-                            <p className=' text-3xl font-bold'>250</p>
-                            <p className=' text-sm text-caribbeangreen-300'>Type of<br/>Courses</p>
-                         </div>
-                    </div>
-                </div>
+            </div>
         </div>
     </div>
   )

@@ -126,7 +126,7 @@ const Home = () => {
                         }
 
                         backgroundGradient={<div className="codeblock2 absolute"></div>  }
-                        codeColor={"text-pink-25"}
+                        codeColor={"text-pink-200"}
                         codeblock={`<!DOCTYPE html>\n<html>\n<head><title>Example</title>\n<linkrel="stylesheet"href="styles.css">\n</head>\n<body>\n<h1><ahref="/">Header</a>\n</h1>\n<nav><ahref="one/">One</a><ahref="two/">Two</>\n<a><ahref="three/">Three</a>\n</nav>`}
                         
                     />

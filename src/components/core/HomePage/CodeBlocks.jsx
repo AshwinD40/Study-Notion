@@ -24,7 +24,7 @@ const CodeBlocks = ({
             <div className=' text-richblack-300 text-base  w-[85%] -mt-3 font-bold '>
                 {subheading}
             </div>
-            <div className='flex flex-row gap-7 mt-7'>
+            <div className='flex gap-7 mt-7'>
                 <CTAButton active={ctabtn1.active} linkto={ctabtn1.linkto}>
                     <div className='flex gap-2 items-center'>
                         {ctabtn1.btnText}
@@ -32,7 +32,6 @@ const CodeBlocks = ({
                     </div>
                 </CTAButton>
                 <CTAButton active={ctabtn2.active} linkto={ctabtn2.linkto}>
-                 
                     {ctabtn2.btnText}
                 </CTAButton>
             </div>
@@ -43,7 +42,7 @@ const CodeBlocks = ({
             {
                 backgroundGradient
             }
-            <div className=' text-center flex flex-col w-[10%] select-none text-[#6E727F] font-inter  font-bold '>
+            <div className=' text-center flex flex-col w-[10%] select-none text-richblack-400 font-inter  font-bold '>
                     
                 <p>1</p>
                 <p>2</p>
