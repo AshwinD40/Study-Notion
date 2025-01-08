@@ -18,8 +18,8 @@ const InstructorSection = () => {
             </div>
             <div className='lg:w-[50%] flex flex-col gap-10'>
                 <div className=' lg:w-[50%] text-4xl font-bold '>
-                    Become an 
-                    <HighlightText text={" Instructor"}/>
+                    Become an {' '}
+                    <HighlightText text={"Instructor"}/>
                 </div>
 
                 <p className=' text-[16px] text-justify font-semibold text-richblack-300 w-[90%]'>Instructors from around the world teach millions of students on StudyNotion. We provide the tools and skills to teach what you love.</p>
