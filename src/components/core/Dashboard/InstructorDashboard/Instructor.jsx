@@ -6,7 +6,7 @@ import InstructorChart from './InstructorChart';
 import { Link } from 'react-router-dom';
 
 
-const Instructor = () => {
+export default function Instructor () {
 
     const {token} = useSelector((state) => state.auth)
     const {user} = useSelector((state) => state.profile)
@@ -40,84 +40,93 @@ const Instructor = () => {
     const totalStudents = instructorData?.reduce((acc, curr ) => acc + curr.totalStudentEnrolled , 0)
 
   return (
-    <div className=' text-white w-11/12'>
-        
-        <div className=' flex flex-col mb-5'>
-            <h1 className=' font-bold text-xl'>Hi {user?.firstName}👋</h1>
-            <p>Let{"'"}s start something New</p>
+    <div>
+        <div className=' space-y-2'>
+            <h1 className=' font-bold text-2xl text-richblack-5'>
+                Hi {user?.firstName}👋
+            </h1>
+            <p className=' font-medium text-richblack-200'>
+                Let{"'"}s start something New
+            </p>
         </div>
-
-        {
-            loading 
-                ? (<div className='spinner'></div>) 
-                : courses.length > 0
-                    ? (
-                        <div className=' flex flex-col gap-5'>
-                            <div className='  flex lg:flex-row md:flex-row sm:flex-row flex-col gap-5'>
-                                <InstructorChart courses={instructorData}/>
-                                <div className=' lg:w-[25%] flex flex-col text-lg font-bold gap-2 p-3 bg-richblack-800 rounded-md'>
-                                    <h1 className=' text-xl font-bold text-caribbeangreen-300-400 text-center'>Statistics</h1>
-                                    <div className=' flex gap-2'>
-                                        <p className=' text-pink-300'>Total Courses : </p>
-                                        <p>{courses.length}</p>
-                                    </div>
-                                    <div className=' flex gap-2'>
-                                        <p className=' text-yellow-200'>Total Students : </p>
-                                        <p>{totalStudents}</p>
-                                    </div>
-                                    <div className=' flex gap-2'>
-                                        <p className=' text-caribbeangreen-300'>Total Amount : </p>
-                                        <p>Rs. {totalAmount}</p>
-                                    </div>
-                                </div>
+        {loading ? (
+            <div className='spinner'></div>
+        ) : courses.length > 0 ? (
+            <div>
+                <div className=' my-4 flex h-[450px] space-x-4'>
+                    {totalAmount > 0 || totalStudents > 0 ? (
+                        <InstructorChart courses={instructorData}/>
+                    ) : (
+                        <div className="flex-1 rounded-md bg-richblack-800 p-6">
+                            <p className="text-lg font-bold text-richblack-5">Visualize</p>
+                            <p className="mt-4 text-xl font-medium text-richblack-50">Not Enough Data To Visualize</p>
+                        </div>
+                    )}
+                    <div className=' flex flex-col min-w-[250px] bg-richblack-800 rounded-md p-6'>
+                        <p className=' text-xl font-bold text-richblack-5'>Statistics</p>
+                        <div className=' mt-4 space-y-4'>
+                            <div>
+                                <p className=' text-pink-300 font-semibold text-xl'>Total Courses : </p>
+                                <p className=' text-3xl font-semibold text-richblack-50'>{courses.length}</p>
                             </div>
                             <div>
-                                {/* Link your courses */}
-                                <div className=' flex justify-between px-2 mb-3'>
-                                    <p className=' text-xl font-bold '>Your Courses</p>
-                                    <Link to="/dashboard/my-courses">
-                                        <p className=' text-yellow-200 font-bold'>View all</p>
-
-                                    </Link>
-                                </div>
-                                <div className=' flex justify-around p-3 bg-richblack-800 rounded-md border-[1px] border-richblack-600 '>
-                                    {
-                                        courses.slice(0,3).map((course) =>(
-                                            <div>
-                                                <img 
-                                                    src={course.thumbnail}
-                                                    height="250px"
-                                                    width="340px"
-                                                    className=' rounded-md'
-                                                />
-                                                <div>
-                                                    <p className=' text-caribbeangreen-300 font-bold'>{course.courseName}</p>
-                                                    <div className=' flex gap-2'>
-                                                        <p className=' text-richblack-400'>{course.studentsEnrolled.length} Student</p>
-                                                        <p> | </p>
-                                                        <p className=' text-richblack-400'>Price: {course.price}</p>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        ))
-                                    }
-                                </div>
-                                
+                                <p className=' text-yellow-200 font-semibold text-xl'>Total Students : </p>
+                                <p className=' text-3xl font-semibold text-richblack-50'>{totalStudents}</p>
+                            </div>                            
+                            <div>    
+                                <p className=' text-xl font-semibold text-caribbeangreen-300'>Total Amount : </p>
+                                <p className=' text-3xl font-semibold text-richblack-50'>Rs. {totalAmount}</p>
                             </div>
-
+                        </div>        
+                    </div>
+                </div>
+                <div className=' rounded-md bg-richblack-800 p-6'>
+                    {/* Link your courses */}
+                    <div className=' flex items-center justify-between'>
+                        <p className=' text-xl font-bold text-richblack-5 '>Your Courses</p>
+                        <Link to="/dashboard/my-courses">
+                            <p className=' text-yellow-200 text-xs font-bold'>View all</p>
+                        </Link>
+                    </div>
+                <div className=' my-4 flex items-start space-x-6 '>
+                    {courses.slice(0, 3).map((course) => (
+                        <div key={course._id} className=' w-1/3'>
+                            <img 
+                                src={course.thumbnail}
+                                alt={course.courseName}
+                                className=' h-[201px] w-full object-cover  rounded-md'
+                            />
+                            <div className=' mt-3 w-full'>
+                                <p className=' text-caribbeangreen-300 text-sm object-cover font-bold'>
+                                    {course.courseName}
+                                </p>
+                                <div className=' mt-1 flex items-center space-x-2'>
+                                    <p className=' text-richblack-300 text-xs font-medium '>
+                                        {course.studentsEnrolled.length} Student
+                                    </p>
+                                    <p className=' text-xs font-medium text-richblack-300'>
+                                        | 
+                                    </p>
+                                    <p className=' text-xs font-medium text-richblack-300'>
+                                        Price: {course.price}
+                                    </p>
+                                </div>
+                            </div>
                         </div>
-                    )
-                    : (
-                        <div>
-                            <p>You have not created any courses yet!</p>
-                            <Link to="/dashboard/addCourse">
-                                Create new Course
-                            </Link>
-                        </div>)
-        }
+                    ))}
+                </div>
+            </div>
+        </div>
+        ) : (
+            <div className="mt-20 rounded-md bg-richblack-800 p-6 py-20">
+                <p className="text-center text-2xl font-bold text-richblack-5">You have not created any courses yet!</p>
+                <Link to="/dashboard/addCourse">
+                    <p className="mt-1 text-center text-lg font-semibold text-yellow-50">
+                        Create a new Course
+                    </p>
+                </Link>
+            </div>
+        )}
     </div>
   )
 }
-
-export default Instructor

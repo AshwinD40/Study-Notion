@@ -4,7 +4,7 @@ const otpGenerator = require('otp-generator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); 
 const mailSender = require('../utils/mailSender');
-const {passwordUpdated} = require('../mail/template/passwordUpdate');
+const { passwordUpdated } = require('../mail/template/passwordUpdate');
 const Profile = require('../models/Profile');
 require('dotenv').config();
 
@@ -250,19 +250,18 @@ exports.login = async (req, res) =>{
 exports.changedPassword = async (req, res) => {
 
     try{
-
         // get user details
         const userDetails = await User.findById(req.user.id);
 
         // get data from req.body
-        const {oldPassword, newPassword , confirmNewPassword} = req.body;
+        const {oldPassword, newPassword } = req.body
 
 
         // validation
         const isPasswordMatch = await bcrypt.compare(
             oldPassword,
             userDetails.password
-        );
+        )
         if(!isPasswordMatch){
             // if old password does not match , return 401(unauthorized)
             return res.status(401).json({
@@ -270,16 +269,9 @@ exports.changedPassword = async (req, res) => {
                 message:"Old password is incorrect",
             })
         }
-        // if old password is correct , check if new password and confirm new password are same
-        if(newPassword !== confirmNewPassword){
-            return res.status(400).json({
-                success:false,
-                message:"New password and confirm new password are not same",
-            })
-        }
     
         // update password 
-        const encryptedPassword = await bcrypt.hash(newPassword , 10);
+        const encryptedPassword = await bcrypt.hash(newPassword, 10);
         const updatedUserDetails = await User.findByIdAndUpdate(
             req.user.id,
             {password:encryptedPassword},
@@ -291,15 +283,16 @@ exports.changedPassword = async (req, res) => {
         try{
             const emailResponse = await mailSender(
                 updatedUserDetails.email , 
+                "Password for your account has been updated",
                 passwordUpdated(
                     updatedUserDetails.email,
-                    `your password is succsefully changesd
+                    `Password updated succsefully for
                     ${updatedUserDetails.firstName} 
                     ${updatedUserDetails.lastName}`
                 )
                 
             )
-            console.log("Email Sent Successfully",emailResponse.response);
+            console.log("Email sent successfully",emailResponse.response);
             }catch(error){
                 console.error(" Error occured while sending mail",error)
                 return res.status(500).jaon({
@@ -312,7 +305,7 @@ exports.changedPassword = async (req, res) => {
         // return success res
         return res.status(200).json({
             success:true,
-            message:"password is changed successfully",
+            message:"password updated successfully",
         })
     }
     catch(error){

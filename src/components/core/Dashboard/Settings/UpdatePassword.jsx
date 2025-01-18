@@ -32,7 +32,7 @@ export default function UpdatePassword() {
   return (
     <>
       <form onSubmit={handleSubmit(submitPasswordForm)}>
-        <div className="my-10 w-[80%] flex flex-col gap-y-6 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-5 px-8">
+        <div className="my-10 flex flex-col gap-y-6 rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-5 px-12">
           <h2 className="text-lg font-semibold text-richblack-5">Password</h2>
           <div className="flex flex-col gap-5 lg:flex-row">
             <div className="relative flex flex-col gap-2 lg:w-[48%]">
@@ -44,7 +44,7 @@ export default function UpdatePassword() {
                 name="oldPassword"
                 id="oldPassword"
                 placeholder="Enter Current Password"
-                className="form-style px-4 py-2 bg-richblack-700 shadow-sm shadow-richblack-300 text-richblack-50 rounded-lg"
+                className="form-style "
                 {...register("oldPassword", { required: true })}
               />
               <span
@@ -72,7 +72,7 @@ export default function UpdatePassword() {
                 name="newPassword"
                 id="newPassword"
                 placeholder="Enter New Password"
-                className="form-style px-4 py-2 bg-richblack-700 shadow-sm shadow-richblack-300 text-richblack-50 rounded-lg"
+                className="form-style "
                 {...register("newPassword", { required: true })}
               />
               <span
@@ -93,7 +93,7 @@ export default function UpdatePassword() {
             </div>
           </div>
         </div>
-        <div className="flex w-[80%] justify-end gap-2">
+        <div className="flex justify-end gap-2">
           <button
             onClick={() => {
               navigate("/dashboard/my-profile")

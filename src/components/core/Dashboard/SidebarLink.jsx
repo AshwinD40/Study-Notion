@@ -2,19 +2,24 @@ import React from 'react'
 import * as Icons from 'react-icons/vsc'
 import { matchPath, NavLink, useLocation } from 'react-router-dom'
 
+import {resetCourseState} from "../../../slices/courseSlice"
+import { useDispatch } from 'react-redux'
+
 
 export default function  SidebarLink({link,iconName})  {
 
     const Icon = Icons[iconName]
     const location = useLocation();
+    const dispatch = useDispatch();
     
     const matchRoute = (route) => {
-        return matchPath({path: route }, location.pathname);
+      return matchPath({path: route }, location.pathname);
     }
 
   return (
     <NavLink 
       to={link.path}
+      onClick={() => dispatch(resetCourseState())}
       className={`relative px-8 py-2 text-sm font-medium ${
         matchRoute(link.path) 
         ? " bg-yellow-800 text-yellow-50"
