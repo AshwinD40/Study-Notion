@@ -1,72 +1,48 @@
-📘 Study Notion – E-learning Platform
+# 📘 Study Notion – E-learning Platform
+
 A full-stack web application that enables instructors to upload courses and learners to purchase and track their progress. Built with the MERN stack, JWT authentication, and responsive design.
 
-🚀 Live Demo
-🔗 study-notion-ashwin40.vercel.app/
-🔗 https://github.com/AshwinD40/Study-Notion
+---
 
-🧰 Tech Stack
-• Frontend: React.js, Tailwind CSS, Redux, React Router
-• Backend: Node.js, Express.js, MongoDB, JWT
-• Authentication: JWT with role-based access control
-• Database: MongoDB with Mongoose
-• Hosting: Vercel (Frontend), Render/Heroku (Backend)
+## 🚀 Live Demo
 
-📌 Key Features
-👨‍🏫 Instructor Panel
-• Register and login securely
-• Create, update, or delete courses
-• Add course details, videos, and pricing
+🔗 [Live Site](https://study-notion-ashwins-projects-c2d89900.vercel.app/)  
+🔗 [GitHub Repository](https://github.com/AshwinD40/Study-Notion)
 
-🎓 Learner Panel
-• Browse all available courses
-• Enroll in and purchase courses
-• Track progress in the dashboard
+---
 
-🔐 Authentication
-• Secure login/register for instructors and students
-• Role-based access using JWT
+## 🧰 Tech Stack
 
-🖥️ UI/UX
-• Fully responsive design using Tailwind CSS
-• Clean and intuitive dashboard for both user roles
+- **Frontend:** React.js, Tailwind CSS, Redux, React Router  
+- **Backend:** Node.js, Express.js, MongoDB, JWT  
+- **Authentication:** JWT with role-based access control  
+- **Database:** MongoDB with Mongoose  
+- **Hosting:** Vercel (Frontend), Render/Heroku (Backend)
 
-⚙️ Installation & Setup
-• Clone the project and install dependencies:
+---
 
+## 📌 Key Features
 
-• git clone https://github.com/AshwinD40/Study-Notion.git
-• cd Study-Notion
+### 👨‍🏫 Instructor Panel
 
-🔧 Frontend Setup
-• cd client
-• npm install
-• npm run dev
+- Register and login securely  
+- Create, update, or delete courses  
+- Add course details, videos, and pricing  
 
-🧪 Backend Setup
-• cd server
-• npm install
-• npm run start
+### 🎓 Learner Panel
 
-🗂️ Folder Structure
-Study-Notion/
-│
-├── client/            # React frontend
-│   ├── src/
-│   └── public/
-│
-├── server/            # Express backend
-│   ├── controllers/
-│   ├── routes/
-│   ├── models/
-│   └── middleware/
+- Browse all available courses  
+- Enroll in and purchase courses  
+- Track progress in the dashboard  
 
+### 🔐 Authentication
 
-🧠 Lessons Learned
-• Built a secure role-based login system with JWT
-• Learned how to manage course data efficiently using MongoDB
-• Implemented a modular file structure with MVC in Express
-• Improved responsive design skills using Tailwind
+- Secure login/register for instructors and students  
+- Role-based access using JWT  
 
-🙋‍♂️ Author
-Ashwin Chaudhary
+### 🖥️ UI/UX
+
+- Fully responsive design using Tailwind CSS  
+- Clean and intuitive dashboard for both user roles  
+
+---
