@@ -46,3 +46,19 @@ A full-stack web application that enables instructors to upload courses and lear
 - Clean and intuitive dashboard for both user roles  
 
 ---
+## ⚙️ Installation
+
+Clone the repo:
+
+```bash
+git clone https://github.com/AshwinD40/Study-Notion.git
+cd Study-Notion
+
+cd client
+npm install
+npm run dev
+
+cd server
+npm install
+npm run start
+
