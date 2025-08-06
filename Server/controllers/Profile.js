@@ -9,16 +9,16 @@ exports.updateProfile = async (req , res) =>{
     try{
 
         // get data with user Id
-        const {dateOfBirth="" , about="",contactNumber, gender } = req.body
+        const {dateOfBirth = "" , about = "",contactNumber, gender } = req.body
 
         // find userId
         const id = req.user.id
 
         // find user detail
-        const userDetails = await User.findById(id);
-        const profile = await Profile.findById(userDetails.additionalDetails);
-       
+        const userDetails = await User.findById(id).populate("additionalDetails");
 
+        const profile = await Profile.findById(userDetails.additionalDetails._id);
+       
         // update
         profile.dateOfBirth = dateOfBirth;
         profile.about = about;
@@ -27,12 +27,17 @@ exports.updateProfile = async (req , res) =>{
 
         await profile.save();
 
+        // populate latest user data again
+        const updatedUser = await User.findById(id)
+            .populate("additionalDetails")
+            .exec();
+
         // return res
         return res.status(200).json({
             success:true,
             message:"Profile updated successfully",
-            profile,
-        })
+            updatedUserDetails:updatedUser,
+        });
     }
     catch(error){
         console.log(error.message);

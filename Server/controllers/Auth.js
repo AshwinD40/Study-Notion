@@ -158,7 +158,6 @@ exports.signUp = async (req , res) =>{
             additionalDetails:profileDetails._id,
             image:`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
 
-
         })
 
         // return res
@@ -283,18 +282,21 @@ exports.changedPassword = async (req, res) => {
         try{
             const emailResponse = await mailSender(
                 updatedUserDetails.email , 
-                "Password for your account has been updated",
+                "Your Password has been updated successfully",
                 passwordUpdated(
                     updatedUserDetails.email,
-                    `Password updated succsefully for
-                    ${updatedUserDetails.firstName} 
-                    ${updatedUserDetails.lastName}`
+                    `Hello ${updatedUserDetails.firstName} ${updatedUserDetails.lastName},
+                    <br><br>
+                    Your password has been changed successfully. If you did not perform this action, please contact our support team immediately.
+                    <br><br>
+                    Regards,<br>Team Support`
                 )
                 
             )
-            console.log("Email sent successfully",emailResponse.response);
+            console.log("Password updated email send:",emailResponse.response);
+
             }catch(error){
-                console.error(" Error occured while sending mail",error)
+                console.error("Failed to send Password change email",error)
                 return res.status(500).jaon({
                     success:false,
                     message:"Failed to send change password mail to user",
@@ -312,7 +314,7 @@ exports.changedPassword = async (req, res) => {
         console.log("Error occurred while updating password" ,error);
         return res.status(500).json({
             success:false,
-            message:"something went wrong",
+            message:"something went wrong while updating password",
             error:error.message
         });
     };

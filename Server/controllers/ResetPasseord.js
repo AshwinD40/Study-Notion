@@ -31,12 +31,23 @@ exports.resetPasswordToken = async (req, res)=>{
         )
         console.log("DETAILS" , updatedDetails);
         // create url
-        const url =`http://localhost:3000/update-password/${token}`;
+        const url =`http://study-notion-ashwin40.vercel.app/update-password/${token}`;
 
         // send main containing the url
-        await mailSender(email  ,
-            "Password reset Link",
-            `"Password Reset Link: ${url}. Please click this url to reset your password.`
+        await mailSender(
+            email,
+            "Reset Your Password - Action Required",
+            `Dear User,
+            We received a request to reset your password. Please click the link below to proceed:
+
+            Password Reset Link: 
+            
+                ${url} 
+            
+            If you did not request this, you can safely ignore this email.
+
+            Thanks & Regards,
+            Your Support Team`  
         );
         //return res
         return res.status(200).json({
