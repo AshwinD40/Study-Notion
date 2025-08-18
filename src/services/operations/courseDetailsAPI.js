@@ -1,6 +1,5 @@
 import { toast } from "react-hot-toast"
 
-import { updateCompletedLectures } from "../../slices/viewCourseSlice"
 // import { setLoading } from "../../slices/profileSlice";
 import { apiConnector } from "../apiconnector"
 import { courseEndpoints } from "../apis"
@@ -273,10 +272,17 @@ export const fetchInstructorCourses = async (token) => {
       }
     )
     console.log("INSTRUCTOR COURSES API RESPONSE............", response)
+    
+    
     if (!response?.data?.success) {
       throw new Error("Could Not Fetch Instructor Courses")
     }
-    result = response?.data?.data
+    result = response?.data?.data || []
+    
+    if(result.length === 0) {
+      toast.success("Create a course to see it here")
+    }
+
   } catch (error) {
     console.log("INSTRUCTOR COURSES API ERROR............", error)
     toast.error(error.message)

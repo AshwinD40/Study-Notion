@@ -4,7 +4,7 @@ import SidebarLink from "./SidebarLink"
 import {logout} from "../../../services/operations/authAPI"
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { VscSignOut } from "react-icons/vsc";
+import { VscSignOut, VscMenu } from "react-icons/vsc";
 import ConfirmationModal from '../../common/ConfirmationModal';
 
 export default function Sidebar() {
@@ -16,6 +16,7 @@ export default function Sidebar() {
     const navigate = useNavigate()
     // to keep track of confirmation modal
     const [confirmationModal , setConfirmationModal] = useState(null);
+    const [isOpen, setIsOpen] = useState(false);
 
     if(profileLoading || authLoading){
         return(

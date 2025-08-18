@@ -5,48 +5,48 @@ const User = require('../models/User');
 const {uploadImageToCloudinary} = require('../utils/imageUploader');
 const {convertSecondsToDuration} = require("../utils/secToDuration")
 
-exports.updateProfile = async (req , res) =>{
-    try{
+exports.updateProfile = async (req, res) => {
+  try {
+    console.log("Update Profile Request Body:", req.body);
+    const { dateOfBirth = "", about = "", contactNumber, gender } = req.body;
+    const id = req.user.id;
 
-        // get data with user Id
-        const {dateOfBirth = "" , about = "",contactNumber, gender } = req.body
+    const userDetails = await User.findById(id).populate("additionalDetails");
 
-        // find userId
-        const id = req.user.id
-
-        // find user detail
-        const userDetails = await User.findById(id).populate("additionalDetails");
-
-        const profile = await Profile.findById(userDetails.additionalDetails._id);
-       
-        // update
-        profile.dateOfBirth = dateOfBirth;
-        profile.about = about;
-        profile.contactNumber = contactNumber;
-        profile.gender = gender;
-
-        await profile.save();
-
-        // populate latest user data again
-        const updatedUser = await User.findById(id)
-            .populate("additionalDetails")
-            .exec();
-
-        // return res
-        return res.status(200).json({
-            success:true,
-            message:"Profile updated successfully",
-            updatedUserDetails:updatedUser,
-        });
+    if (!userDetails) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
-    catch(error){
-        console.log(error.message);
-        return res.status(500).json({
-            success:false,
-            message:"Server error",
-        })
+
+    const profile = await Profile.findById(userDetails.additionalDetails._id);
+
+    if (!profile) {
+      return res.status(404).json({ success: false, message: "Profile not found" });
     }
-}
+
+    profile.dateOfBirth = dateOfBirth || profile.dateOfBirth;
+    profile.about = about || profile.about;
+    profile.contactNumber = contactNumber || profile.contactNumber;
+    profile.gender = gender || profile.gender;
+
+    await profile.save();
+
+    const updatedUser = await User.findById(id)
+      .populate("additionalDetails")
+      .exec();
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      updatedUserDetails: updatedUser,
+    });
+  } catch (error) {
+    console.log("Update Profile Error:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
 
 // Explore ==>>> how can we schedule deletion function
 exports.deleteAccount = async (req, res) =>{

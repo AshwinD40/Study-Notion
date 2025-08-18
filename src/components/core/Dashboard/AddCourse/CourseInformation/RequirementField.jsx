@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
+import { MdClose } from 'react-icons/md'
 
-const RequirementField = ({name, label, register,errors, setValue , getValues}) => {
+const RequirementField = ({name, label, register, errors, setValue , getValues}) => {
 
     const [requirement , setRequirement] = useState("");
     const [requirementList , setRequirementList] = useState([]);
@@ -20,6 +21,7 @@ const RequirementField = ({name, label, register,errors, setValue , getValues}) 
         if(requirement){
             setRequirementList([...requirementList, requirement]);
         }
+        setRequirement("");
     }
     const handleRemoveRequirement = (index) =>{
         const updatedRequirementList = [...requirementList];
@@ -29,14 +31,15 @@ const RequirementField = ({name, label, register,errors, setValue , getValues}) 
 
   return (
     <div>
-        <label htmlFor={name} className=' text-[12px] text-richblack-50'>{label}<sup className='text-pink-500 '>*</sup></label>
+        <label htmlFor={name} className=' text-sm text-richblack-100'>{label}<sup className='text-pink-500 '>*</sup></label>
         <div>
             <input
                 type='text'
                 id={name}
                 value={requirement}
+                placeholder='Enter requirements'
                 onChange={(e) => setRequirement(e.target.value)}
-                className=' bg-richblack-700 rounded-md shadow-sm shadow-richblack-300 py-2 px-3 w-full'
+                className=' bg-richblack-700 text-md text-richblack-5 rounded-md shadow-sm shadow-richblack-300 py-2 px-3 w-full'
             />
             <button
                 type='button'
@@ -55,8 +58,10 @@ const RequirementField = ({name, label, register,errors, setValue , getValues}) 
                                 <button 
                                     type='button'
                                     onClick={() => handleRemoveRequirement(index)}
-                                    className=' text-pure-greys-700 font-semibold'
-                                >clear</button>
+                                    className=' text-black text-md bg-caribbeangreen-300 rounded-full p-1 hover:bg-caribbeangreen-400 transition duration-200 ease-in-out'
+                                >
+                                    <MdClose />
+                                </button>
                             </li>
                         ))
                     }

@@ -190,7 +190,7 @@ export default function EditProfile() {
           >
             Cancel
           </button>
-          <IconBtn type="submit" text="Save" />
+          <IconBtn type="submit" text="Update" />
         </div>
       </form>
     </>

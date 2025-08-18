@@ -32,23 +32,38 @@ exports.resetPasswordToken = async (req, res)=>{
         console.log("DETAILS" , updatedDetails);
         // create url
         const url =`http://study-notion-ashwin40.vercel.app/update-password/${token}`;
+        
 
         // send main containing the url
         await mailSender(
             email,
             "Reset Your Password - Action Required",
-            `Dear User,
-            We received a request to reset your password. Please click the link below to proceed:
+            `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: auto;">
+                <h2 style="color: #2e6c80;">Reset Your Password</h2>
+                <p>Dear User,</p>
+                
+                <p>We received a request to reset your password. Please click the button below to proceed:</p>
+                
+                <div style="text-align: center; margin: 20px 0;">
+                    <a href="${url}"
+                    style="display: inline-block; padding: 12px 24px; background-color: #007BFF; color: white; text-decoration: none; border-radius: 6px; font-weight: bold;">
+                    Reset Password
+                    </a>
+                </div>
 
-            Password Reset Link: 
-            
-                ${url} 
-            
-            If you did not request this, you can safely ignore this email.
+                <p>If the button doesn't work, you can copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; background-color: #f2f2f2; padding: 10px; border-radius: 4px;">${url}</p>
 
-            Thanks & Regards,
-            Your Support Team`  
-        );
+                <p>If you did not request this, you can safely ignore this email.</p>
+
+                <br>
+                <p>Thanks & Regards,</p>
+                <p><strong>Your Support Team</strong></p>
+                </div>
+            `
+            );
+
         //return res
         return res.status(200).json({
             success:true,

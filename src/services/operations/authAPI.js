@@ -22,7 +22,7 @@ export function sendOtp(email, navigate) {
         email,
         checkUserPresent: true,
       })
-      console.log("SENDOTP API RESPONSE............", response)
+      console.log("SEND OTP API RESPONSE............", response)
 
       console.log(response.data.success)
 
@@ -33,11 +33,22 @@ export function sendOtp(email, navigate) {
       toast.success("OTP Sent Successfully")
       navigate("/verify-email")
     } catch (error) {
-      console.log("SENDOTP API ERROR............", error)
-      toast.error("Could Not Send OTP")
+      console.log("SEND OTP API ERROR............", error)
+      if(
+        error.response &&
+        error.response.data &&
+        error.response.data.message === "User already exist"
+      ){
+        toast.error("You already have an account")
+        navigate("/login")
+      } else {
+        toast.error("Could Not Send OTP, please try again")
+      }
+
+    } finally{
+      dispatch(setLoading(false))
+      toast.dismiss(toastId)
     }
-    dispatch(setLoading(false))
-    toast.dismiss(toastId)
   }
 }
 
@@ -147,6 +158,7 @@ export function resetPassword(password, confirmPassword, token, navigate) {
   return async (dispatch) => {
     const toastId = toast.loading("Loading...")
     dispatch(setLoading(true))
+
     try {
       const response = await apiConnector("POST", RESETPASSWORD_API, {
         password,
@@ -166,9 +178,11 @@ export function resetPassword(password, confirmPassword, token, navigate) {
     } catch (error) {
       console.log("RESETPASSWORD ERROR............", error)
       toast.error("Failed To Reset Password")
+
+    }finally {
+      toast.dismiss(toastId)
+      dispatch(setLoading(false))
     }
-    toast.dismiss(toastId)
-    dispatch(setLoading(false))
   }
 }
 

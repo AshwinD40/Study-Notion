@@ -16,7 +16,7 @@ const Home = () => {
   return (
     <div>
          {/*section 01*/}
-            <div className=' relative mx-auto flex flex-col w-11/12 max-w-maxContent items-center text-white justify-between gap-8'>
+            <div className=' relative mx-auto mt-5 flex flex-col w-11/12 max-w-maxContent items-center text-white justify-between gap-8'>
 
                 {/* Become a Instructor Button */}
                 <Link to={"/signUp"}>

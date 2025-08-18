@@ -164,7 +164,7 @@ const CourseInformationForm = () => {
       className=' rounded-md border-[1px] border-richblack-700 bg-richblack-800 p-6 space-y-8 mt-5'
     >
       <div className="flex flex-col space-y-2">
-        <label htmlFor='courseTitle' className=' text-[12px] text-richblack-5'>Course Title <sup className='text-pink-300'>*</sup></label>
+        <label htmlFor='courseTitle' className=' text-sm text-richblack-100'>Course Title <sup className='text-pink-300'>*</sup></label>
         <input 
           id='courseTitle'
           placeholder='Enter course title'
@@ -180,7 +180,7 @@ const CourseInformationForm = () => {
 
       </div>
       <div className="flex flex-col space-y-2">
-        <label htmlFor='courseDescription' className=' text-[12px] text-richblack-5'>
+        <label htmlFor='courseDescription' className=' text-sm text-richblack-100'>
           Course Short Description <sup className='text-pink-300'>*</sup></label>
         <textarea 
           id='courseDescription'
@@ -197,7 +197,7 @@ const CourseInformationForm = () => {
 
       </div>
       <div className="flex flex-col space-y-2">
-        <label htmlFor='coursePrice' className=' text-[12px] text-richblack-50'>
+        <label htmlFor='coursePrice' className=' text-sm text-richblack-100'>
           Course Price <sup className='text-pink-300'>*</sup>
         </label>
         <div className="relative">
@@ -226,12 +226,12 @@ const CourseInformationForm = () => {
 
       </div>
       <div className="flex flex-col space-y-2">
-        <label htmlFor='courseCategory' className=' text-[12px] text-richblack-5'>Category<sup className='text-pink-300'>*</sup></label>
+        <label htmlFor='courseCategory' className=' text-sm text-richblack-100'>Category<sup className='text-pink-300'>*</sup></label>
         <select
           id='courseCategory'
           defaultValue={''}
           {...register("courseCategory",{required:true})}
-          className=' bg-richblack-700 rounded-md shadow-sm shadow-richblack-300 py-2 px-3 w-full'
+          className=' bg-richblack-700 rounded-md shadow-sm shadow-richblack-300 form-style text-richblack-200 py-2 px-3 w-full'
         >
           <option value="" disabled>
             Choose a Category
@@ -280,13 +280,13 @@ const CourseInformationForm = () => {
       />}
 
       <div className="flex flex-col space-y-2">
-        <label htmlFor='courseBenefits' className=' text-[12px] text-richblack-5'>
+        <label htmlFor='courseBenefits' className=' text-sm text-richblack-100'>
           Benefits of the course<sup className='text-pink-300'>*</sup></label>
         <textarea
           id='courseBenefits'
           placeholder='Enter Benefits of the course'
           {...register("courseBenefits", {required:true})}
-          className=' min-h-[130px] bg-richblack-700 rounded-md shadow-sm shadow-richblack-300 resize-x-none py-2 px-3 w-full'
+          className=' min-h-[130px] form-style bg-richblack-700 rounded-md shadow-sm shadow-richblack-300 resize-x-none py-2 px-3 w-full'
         />
         {
           errors.courseBenefits && (
