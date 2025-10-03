@@ -14,29 +14,29 @@ const Course_Card = ({course, Height}) => {
 
 
   return (
-    <div>
-        <Link to={`/courses/${course._id}`}>
-            <div className=' flex flex-col gap-3'>
-                <div>
-                    <img 
-                        src={course?.thumbnail}
-                        alt='course Thumbnail'
-                        className={`${Height} w-[450px] rounded-xl object-cover`}
-                    />
-                </div>
-                <div className='flex flex-col gap-1'>
-                    <p>{course?.courseName}</p>
-                    <p>{course?.instructor?.firstName} {course?.instructor?.lastName}</p>
-                    <div className=' flex gap-x-3'>
-                        <span className=' text-yellow-100'>{avgReviewCount || 4.5}</span>
-                        <RatingStars Review_Count={avgReviewCount}/>
-                        <span className=' text-sm text-richblack-400'>{course?.ratingAndReview?.length}(Review Count)</span>
-                    </div>
-                    <p className=' font-bold'>Rs. {course?.price} </p>
-                </div>
-            </div>
-        </Link>
-    </div>
+  <>
+    <Link to={`/courses/${course._id}`}>
+      <div className=''>
+        <div className="rounded-lg">
+          <img 
+            src={course?.thumbnail}
+            alt='course Thumbnail'
+            className={`${Height} w-[450px] rounded-xl object-cover`}
+          />
+        </div>
+        <div className='flex flex-col gap-1 px-1 py-3"'>
+          <p  className="text-xl text-richblack-5">{course?.courseName}</p>
+          <p className="text-sm text-richblack-50">{course?.instructor?.firstName} {course?.instructor?.lastName}</p>
+          <div className=' flex items-center gap-3'>
+            <span className=' text-yellow-100'>{avgReviewCount || 0}</span>
+            <RatingStars Review_Count={avgReviewCount}/>
+            <span className=' text-richblack-400'>{course?.ratingAndReview?.length} Ratings</span>
+          </div>
+          <p className="text-xl text-richblack-5">Rs. {course?.price} </p>
+        </div>
+      </div>
+    </Link>
+  </>
   )
 }
 

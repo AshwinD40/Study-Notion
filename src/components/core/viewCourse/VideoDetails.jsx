@@ -25,21 +25,19 @@ const VideoDetails = () => {
   useEffect(()=> {
 
     const setVideoSpecificDetails = async() => {
-        if(!courseSectionData.length)
-            return;
+        if(!courseSectionData.length) return;
+
         if(!courseId && !sectionId && !subSectionId) {
             navigate("/dashboard/enrolled-courses");
         }
         else {
             //let's assume k all 3 fields are present
 
-            const filteredData = courseSectionData.filter(
-                (course) => course._id === sectionId
-            )
+            const filteredData = courseSectionData.find((course) => course._id === sectionId)
+            if(!filteredData || !filteredData.subSection) return ;
 
-            const filteredVideoData = filteredData?.[0].subSection.filter(
-                (data) => data._id === subSectionId
-            )
+            const filteredVideoData = filteredData.subSection.find((data) => data._id === subSectionId);
+            if(!filteredVideoData)  return ;
 
             setVideoData(filteredVideoData[0]);
             setVideoEnded(false);
@@ -101,7 +99,7 @@ const VideoDetails = () => {
 
     if(currentSubSectionIndex !== noOfSubSections - 1) {
         //same section ki next video me jao
-        const nextSubSectionId = courseSectionData[currentSectionIndex].subSection[currentSectionIndex + 1]._id;
+        const nextSubSectionId = courseSectionData[currentSectionIndex].subSection[currentSubSectionIndex + 1]._id;
         //next video pr jao
         navigate(`/view-course/${courseId}/section/${sectionId}/sub-section/${nextSubSectionId}`)
     }
@@ -128,7 +126,7 @@ const VideoDetails = () => {
 
     if(currentSubSectionIndex !== 0 ) {
         //same section , prev video
-        const prevSubSectionId = courseSectionData[currentSectionIndex].subSection[currentSubSectionIndex - 1];
+        const prevSubSectionId = courseSectionData[currentSectionIndex].subSection[currentSubSectionIndex - 1]._id;
         //iss video par chalge jao
         navigate(`/view-course/${courseId}/section/${sectionId}/sub-section/${prevSubSectionId}`)
     }
@@ -159,7 +157,7 @@ const VideoDetails = () => {
 
   }
   return (
-    <div className=' text-white flex flex-col gap-5 '>
+    <div className=' text-white flex flex-col gap-5 mt-20 '>
       {
         !videoData ? (
             <img
@@ -175,8 +173,8 @@ const VideoDetails = () => {
                 onEnded={() => setVideoEnded(true)}
                 src={videoData?.videoUrl}
                 className=" rounded-lg"
-                fluid={Boolean}
-                >
+                
+            >
                 <BigPlayButton position="center" />
                 
                 

@@ -6,7 +6,6 @@ import CourseSubSectionAccordionBar from './CourseSubSectionAccordionBar'
 const CourseAccordionBar = ({course, isActive, handleActive}) => {
 
     const contentE1 = useRef(null)
-
     const [active , setActive] = useState(false)
 
     useEffect(()=>{

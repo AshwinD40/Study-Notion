@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import IconBtn from "../../../common/IconBtn"
 import { useNavigate } from 'react-router-dom';
-import { buyCourse } from '../../../../services/operations/StudentFeatureAPI';
+import { BuyCourse } from '../../../../services/operations/StudentFeatureAPI';
 
 
 const RenderTotalAmount = () => {
@@ -15,7 +15,7 @@ const RenderTotalAmount = () => {
 
   const handleBuyCourse = ()=>{
     const courses = cart.map((course) => course._id);
-    buyCourse(token , courses , user, navigate, dispatch )
+    BuyCourse(token , courses , user, navigate, dispatch )
 
   }
 
