@@ -124,18 +124,18 @@ const CourseDetails = () => {
         <div className="mx-auto box-content px-4 lg:w-[1260px] 2xl:relative">
           <div className=' mx-auto grid min-h-[450px] max-w-maxContentTab justify-center py-8 lg:mx-0 lg:justify-items-start lg:py-0 xl:max-w-[810px] '>
             <div  className="relative block max-h-[30rem] lg:hidden">
-                <div className=' absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]'>
-                </div>
-                <img 
-                    src={thumbnail}
-                    alt='course thumbnail'
-                    className='aspect-auto w-full'
-                />
+              <div className=' absolute bottom-0 left-0 h-full w-full shadow-[#161D29_0px_-64px_36px_-28px_inset]'>
+              </div>
+              <img 
+                src={thumbnail}
+                alt='course thumbnail'
+                className='aspect-auto w-full'
+              />
             </div>
             <div className={`z-30 my-5 flex flex-col justify-center gap-4 py-5 text-lg text-richblack-5`}
             >
               <div>
-                  <p className='text-4xl font-bold text-richblack-5 sm:text-[42px]'>{courseName}</p>
+                <p className='text-4xl font-bold text-richblack-5 sm:text-[42px]'>{courseName}</p>
               </div>
                 
               <p className='text-richblack-200' >{courseDescription}</p>

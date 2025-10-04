@@ -62,7 +62,7 @@ const ContactUsForm = () => {
             name="firstname"
             id="firstname"
             placeholder="Enter first name"
-            className="form-style px-4 py-2 bg-richblack-800 rounded-lg"
+            className="form-style "
             {...register("firstname", { required: true })}
           />
           {errors.firstname && (
@@ -80,7 +80,7 @@ const ContactUsForm = () => {
             name="lastname"
             id="lastname"
             placeholder="Enter last name"
-            className="form-style px-4 py-2 bg-richblack-800 rounded-lg"
+            className="form-style "
             {...register("lastname")}
           />
         </div>
@@ -95,7 +95,7 @@ const ContactUsForm = () => {
           name="email"
           id="email"
           placeholder="Enter email address"
-          className="form-style px-4 py-2 bg-richblack-800 rounded-lg"
+          className="form-style "
           {...register("email", { required: true })}
         />
         {errors.email && (
@@ -117,7 +117,7 @@ const ContactUsForm = () => {
               name="firstname"
               id="firstname"
               placeholder="Enter first name"
-              className="form-style px-2 py-3 bg-richblack-800 rounded-lg"
+              className="form-style "
               {...register("countrycode", { required: true })}
             >
               {CountryCode.map((ele, i) => {
@@ -135,7 +135,7 @@ const ContactUsForm = () => {
               name="phonenumber"
               id="phonenumber"
               placeholder="12345 67890"
-              className="form-style px-4 py-2 bg-richblack-800 rounded-lg"
+              className="form-style "
               {...register("phoneNo", {
                 required: {
                   value: true,

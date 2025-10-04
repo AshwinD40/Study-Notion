@@ -8,20 +8,20 @@ const contactDetails = [
     icon: "HiChatBubbleLeftRight",
     heading: "Chat on us",
     description: "Our friendly team is here to help.",
-    details: "info@studynotion.com",
+    details: "Anything in your mind, just message us.",
   },
   {
     icon: "BiWorld",
     heading: "Visit us",
     description: "Come and say hello at our office HQ.",
     details:
-    "Madhur Complex, 1st floor, Naranpura, Ahmedabad - 380015",
+    "Mera koi Thikana nahi hai abhi, Ahemdabad",
   },
   {
     icon: "IoCall",
     heading: "Call us",
-    description: "Mon - Fri From 8am to 5pm",
-    details: "+123 456 7869",
+    description: "Mon - Fri | From 8am to 5pm",
+    details: "+91 1234567890",
   },
 ]
 

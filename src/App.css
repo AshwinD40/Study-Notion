@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html, body{
-    overflow-x: hidden;
+  overflow-x: hidden;
 }
 
 /* ===== Scrollbar CSS ===== */
@@ -90,12 +90,12 @@ details > summary::-webkit-details-marker {
 }
 
 .spinner {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    border: 9px solid #f1f2ff;
-    animation: spinner-bulqg1 0.8s infinite linear alternate,
-      spinner-oaa3wk 1.6s infinite linear;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 9px solid #f1f2ff;
+  animation: spinner-bulqg1 0.8s infinite linear alternate,
+    spinner-oaa3wk 1.6s infinite linear;
 }
 
 .homepage_bg {
@@ -225,7 +225,7 @@ details > summary::-webkit-details-marker {
     @apply text-[14px] text-richblack-5;
   }
   .form-style {
-    @apply rounded-lg bg-richblack-700 p-3 text-[16px] leading-[24px] text-richblack-5 shadow-[0_1px_0_0] shadow-white/50 placeholder:text-richblack-400 focus:outline-none;
+    @apply rounded-md bg-richblack-800 p-2 text-[16px] leading-[24px] text-richblack-50 shadow-[0_1px_0_0] shadow-white/50 placeholder:text-richblack-300 focus:outline-none;
   }
   .section_heading {
     @apply text-2xl font-bold text-richblack-5 lg:text-4xl;
