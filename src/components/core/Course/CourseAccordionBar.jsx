@@ -10,7 +10,7 @@ const CourseAccordionBar = ({course, isActive, handleActive}) => {
 
   useEffect(()=>{
     setActive(isActive?.includes(course._id))
-  },[isActive])
+  },[isActive, course._id])
 
   const [sectionHeight , setSectionHeight] = useState(0)
 

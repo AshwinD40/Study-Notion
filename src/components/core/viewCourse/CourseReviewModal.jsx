@@ -23,7 +23,7 @@ const CourseReviewModal = ({setReviewModal}) => {
     useEffect( () => {
         setValue("courseExperience", "")
         setValue("courseRating", 0)
-    },[])
+    },[setValue])
 
     const ratingChange = (newRating) => {
         setValue("courseRating", newRating);
@@ -60,9 +60,8 @@ const CourseReviewModal = ({setReviewModal}) => {
                 <div className=' flex flex-row gap-3'>
                     <img 
                         src={user?.image}
-                        alt='user image'
+                        alt={`profile-${user.firstName}`}
                         className=' aspect-square w-[50px] rounded-full object-cover'
-                    
                     />
                     <div className=''>
                         <p className='text-richblack-5 font-bold'>{user?.firstName} {user?.lastName}</p>

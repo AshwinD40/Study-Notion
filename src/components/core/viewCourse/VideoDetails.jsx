@@ -42,7 +42,7 @@ const VideoDetails = () => {
         setVideoEnded(false)
       }
     })()
-  },[courseSectionData, courseEntireData, location.pathname])
+  },[courseSectionData, courseEntireData, location.pathname, courseId, navigate, sectionId, subSectionId])
 
   const isFirstVideo = () => {
     const currentSectionIndex = courseSectionData.findIndex(
@@ -114,7 +114,7 @@ const VideoDetails = () => {
       (data) => data._id === sectionId
     )
 
-    const noOfSubSections = courseSectionData[currentSectionIndex].subSection.length;
+    // const noOfSubSections = courseSectionData[currentSectionIndex].subSection.length;
 
     const currentSubSectionIndex = courseSectionData[currentSectionIndex].subSection.findIndex(
       (data) => data._id === subSectionId
