@@ -2,8 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body{
+html,
+body {
+  margin: 0;
+  padding: 0;
   overflow-x: hidden;
+  background-color: #000814; /* richblack-900 */
+  min-height: 100%;
+}
+
+#root {
+  min-height: 100vh;
+  background-color: #000814; /* safety net for React root */
+  display: flex;
+  flex-direction: column;
 }
 
 /* ===== Scrollbar CSS ===== */

@@ -1,87 +1,124 @@
-import React from 'react'
-import { useState } from 'react'
-import {Chart , registerables } from "chart.js"
-import {Pie} from "react-chartjs-2"
+import React, { useState } from "react";
+import { Chart, registerables } from "chart.js";
+import { Pie } from "react-chartjs-2";
 
 Chart.register(...registerables);
 
-const InstructorChart = ({courses}) => {
-    const [currChart , setCurrChart] = useState("Students")
+const InstructorChart = ({ courses }) => {
+  const [currChart, setCurrChart] = useState("Students");
 
-    // function to generate random colors
-    const getRandomColors = (numColors) =>{
-        const colors = []
-        for(let i=0 ; i < numColors ; i++){
-            const color = `rgb(${Math.floor(Math.random() * 256)}, ${Math.floor(
-                Math.random() * 256
-            )}, ${Math.floor(Math.random() * 256)})`
-            colors.push(color);
-        }
-        return colors;
+  // Neon colors
+  const NEON_COLORS = [
+    "#2CE5A7", // green
+    "#FBCB4A", // yellow
+    "#FF7AB5", // pink
+    "#6DDFFD", // cyan
+    "#C084FC", // purple
+    "#FF8E6E", // coral
+  ];
+
+  const getNeonColors = (count) => {
+    const colors = [];
+    for (let i = 0; i < count; i++) {
+      colors.push(NEON_COLORS[i % NEON_COLORS.length]);
     }
+    return colors;
+  };
 
-    // create data for chart displaying student info
+  const chartDataForStudents = {
+    labels: courses.map((c) => c.courseName),
+    datasets: [
+      {
+        label: "Students",
+        data: courses.map((c) => c.totalStudentEnrolled),
+        backgroundColor: getNeonColors(courses.length),
+        borderColor: "rgba(255,255,255,0.3)",
+        borderWidth: 2,
+        hoverOffset: 10,
+      },
+    ],
+  };
 
-    const chartDataForStudents = {
-        labels: courses.map((courses) => courses.courseName) ,
-        datasets:[
-            {
-                data:courses.map((courses) => courses.totalStudentEnrolled),
-                backgroundColor: getRandomColors(courses.length),
+  const chartDataForIncome = {
+    labels: courses.map((c) => c.courseName),
+    datasets: [
+      {
+        label: "Revenue",
+        data: courses.map((c) => c.totalAmountGenerated),
+        backgroundColor: getNeonColors(courses.length),
+        borderColor: "rgba(255,255,255,0.3)",
+        borderWidth: 2,
+        hoverOffset: 10,
+      },
+    ],
+  };
 
-            }
-        ]
-    }
+  const options = {
+    maintainAspectRatio: false,
 
-    // create data for chart displaying income info
+    plugins: {
+      legend: {
+        position: "bottom",
+        labels: {
+          color: "#ffffff",
+          font: {
+            size: 12,
+            family: "Inter",
+          },
+          padding: 15,
+        },
+      },
+      tooltip: {
+        backgroundColor: "rgba(0,0,0,0.6)",
+        titleColor: "#fff",
+        bodyColor: "#fff",
+        borderColor: "rgba(255,255,255,0.2)",
+        borderWidth: 1,
+        padding: 10,
+      },
+    },
+  };
 
-    const chartDataForIncome =  {
-        labels: courses.map((courses) => courses.courseName) ,
-        datasets:[
-            {
-                data:courses.map((courses) => courses.totalAmountGenerated),
-                backgroundColor: getRandomColors(courses.length),
-
-            }
-        ]
-    }
-
-    // create options
-
-    const options = {
-        maintainAspectRatio: false,
-    }
   return (
-    <div className=' flex flex-1 flex-col gap-y-4 rounded-md bg-richblack-800 p-6'>
-        <p className=' text-lg font-bold text-richblack-5'>Visualise</p>
-        <div className=' space-x-4 font-semibold'>
-            <button
-                onClick={() => setCurrChart("Students")}
-                className={`rounded-md p-1 px-3 transition-all duration-200 ${
-                    currChart === "Students"
-                        ? "bg-richblack-700 text-yellow-50"
-                        : "text-richblack-5"}`}
-            >
-                Student
-            </button>
-            <button
-                onClick={() => setCurrChart("Income")}
-                className={` rounded-md p-1 px-3 transition-all duration-200 ${
-                    currChart === "Income"
-                        ? " bg-richblack-700 text-yellow-50"
-                        : " text-richblack-5"}`}
-            >
-                Income
-            </button>
-        </div>
-        <div>
-            <Pie
-                data={currChart === "Students" ? chartDataForStudents : chartDataForIncome}
-                options={options}
-            />
-        </div>
-    </div>
-  )
-}
+    <div
+      className="  rounded-3xl   bg-white/10   backdrop-blur-2xl   border border-white/15   shadow-[0_18px_60px_rgba(0,0,0,0.55)]   p-4 md:p-6 flex flex-col gap-y-4 w-full h-full "
+    >
+      <div className="flex items-center justify-between">
+        <p className="text-lg font-bold text-richblack-5">Visualization</p>
 
-export default InstructorChart
+        <div className="flex gap-2">
+          <button
+            onClick={() => setCurrChart("Students")}
+            className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
+              currChart === "Students"
+                ? "bg-yellow-400/20 text-yellow-200 border border-yellow-300/40"
+                : "text-richblack-200 hover:text-yellow-50"
+            }`}
+          >
+            Students
+          </button>
+
+          <button
+            onClick={() => setCurrChart("Income")}
+            className={`px-3 py-1 rounded-md text-sm font-semibold transition-all ${
+              currChart === "Income"
+                ? "bg-yellow-400/20 text-yellow-200 border border-yellow-300/40"
+                : "text-richblack-200 hover:text-yellow-50"
+            }`}
+          >
+            Income
+          </button>
+        </div>
+      </div>
+
+      <div className="relative h-[260px] md:h-[300px] lg:h-[340px]">
+        <Pie
+          data={currChart === "Students" ? chartDataForStudents : chartDataForIncome}
+          options={options}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default InstructorChart;

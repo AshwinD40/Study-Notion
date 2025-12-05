@@ -113,6 +113,19 @@ module.exports = {
         700: "#553F02",
         800: "#3D2A01",
         900: "#251400",
+      },red: {
+        5: "#FFE5E5",
+        25: "#FFB8B8",
+        50: "#FF8A8A",
+        100: "#FF5C5C",
+        200: "#FF2E2E",
+        300: "#E02626",
+        400: "#C01F1F",
+        500: "#A01818",
+        600: "#801111",
+        700: "#600B0B",
+        800: "#400606",
+        900: "#200303",
       },
       "pure-greys": {
         5: "#F9F9F9",
@@ -128,6 +141,31 @@ module.exports = {
         800: "#171717",
         900: "#141414",
       },
+      // 🔥 NEW NEON PALETTE (Modern Glow UI)
+      neon: {
+        100: "#7DF9FF",  // electric blue
+        200: "#8A2EFF",  // neon violet
+        300: "#39FF14",  // neon green
+        400: "#FF00FF",  // neon magenta
+        500: "#FF6B00",  // neon orange
+      },
+
+      // 🔥 NEW GLASS COLORS (for frosted UI)
+      glass: {
+        100: "rgba(255,255,255,0.08)",
+        200: "rgba(255,255,255,0.12)",
+        300: "rgba(255,255,255,0.18)",
+        400: "rgba(255,255,255,0.24)",
+      },
+
+      // 🔥 NEW DARK GRADIENT HELPERS
+      night: {
+        100: "#0a0f1f",
+        200: "#0d1528",
+        300: "#101a32",
+        400: "#131f3c",
+      },
+
     },
     extend: {
       maxWidth: {

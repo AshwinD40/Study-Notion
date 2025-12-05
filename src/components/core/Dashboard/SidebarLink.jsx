@@ -13,47 +13,58 @@ export default function SidebarLink({ link, iconName, showLabel = false }) {
   const isActive = matchRoute(link.path);
 
   const handleClick = () => {
-    try { dispatch(resetCourseState()); } catch {}
+    try {
+      dispatch(resetCourseState());
+    } catch {
+      // ignore
+    }
   };
 
+  // FULL LABEL VARIANT (mobile sheet / glass list)
   if (showLabel) {
     return (
       <NavLink
         to={link.path}
         onClick={handleClick}
         className={`
-          w-full flex items-center gap-2 rounded-lg px-3 py-2
-          transition-all duration-150 select-none text-white/90
-          backdrop-blur-xl border
-          ${isActive
-            ? "bg-white/20 border-white/40 shadow-[0_4px_12px_rgba(255,255,255,0.12)] text-white"
-            : "bg-white/10 border-white/10 hover:bg-white/15 hover:border-white/20"
+          w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5
+          text-[12px] leading-none select-none
+          transition-all duration-150 text-white/90
+          border backdrop-blur-xl
+          ${
+            isActive
+              ? "bg-white/20 border-white/40 shadow-[0_3px_10px_rgba(255,255,255,0.18)]"
+              : "bg-white/8 border-white/10 hover:bg-white/14 hover:border-white/25"
           }
         `}
-        style={{
-          WebkitBackdropFilter: "blur(10px)",
-        }}
+        style={{ WebkitBackdropFilter: "blur(10px)" }}
       >
-        {/* icon */}
+        {/* icon bubble */}
         <span
           className={`
-            w-7 h-7 flex items-center justify-center rounded-md
-            ${isActive ? "bg-white/25" : "bg-white/10"}
+            w-7 h-7 flex items-center justify-center rounded-md flex-shrink-0
+            ${isActive ? "bg-white/28" : "bg-white/10"}
           `}
         >
           {Icon && (
-            <Icon className={`text-base ${isActive ? "text-white" : "text-white/75"}`} />
+            <Icon
+              className={`text-[13px] ${
+                isActive ? "text-white" : "text-white/80"
+              }`}
+            />
           )}
         </span>
 
         {/* label */}
-        <span className="text-[13px] font-medium leading-none">
+        <span className="truncate font-medium">
           {link.name}
         </span>
       </NavLink>
     );
   }
 
+
+  // DEFAULT VARIANT (desktop sidebar)
   return (
     <NavLink
       to={link.path}
@@ -61,34 +72,40 @@ export default function SidebarLink({ link, iconName, showLabel = false }) {
       title={link.name}
       aria-label={link.name}
       className={`
-        group relative flex items-center gap-x-3 transition-all duration-180
-        rounded-md select-none
-        px-0 py-1.5
-        w-12 h-12 justify-center
-        md:w-auto md:h-auto md:justify-start md:px-3 md:py-2
-        ${isActive ? "bg-yellow-800 text-yellow-50" : "text-richblack-300"}
+        group relative flex items-center gap-x-3 
+        rounded-xl px-3 py-2
+        transition-all duration-150 select-none
+        ${
+          isActive
+            ? "bg-white/14 text-white shadow-[0_6px_20px_rgba(15,23,42,0.6)]"
+            : "text-white/70 hover:bg-white/8 hover:text-white"
+        }
       `}
     >
-      {/* Desktop accent bar (unchanged) */}
+      {/* left accent bar */}
       <span
         className={`
           hidden md:block absolute left-0 top-1/2 -translate-y-1/2
-          h-8 w-[0.15rem] bg-yellow-50 rounded
-          ${isActive ? "opacity-100" : "opacity-0"}
+          h-7 w-[3px] rounded-full
+          bg-gradient-to-b from-yellow-200 to-yellow-400
+          ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-60"}
+          transition-opacity duration-150
         `}
       />
 
       {/* icon */}
-      <span className="flex items-center justify-center flex-shrink-0 rounded-md w-10 h-10 md:w-8 md:h-8">
+      <span className="flex items-center justify-center flex-shrink-0 rounded-lg w-8 h-8 bg-white/5">
         {Icon && (
           <Icon
-            className={`text-lg md:text-base ${isActive ? "text-yellow-50" : "text-richblack-100"}`}
+            className={`text-base ${
+              isActive ? "text-yellow-100" : "text-white/80"
+            }`}
           />
         )}
       </span>
 
-      {/* label (Desktop only) */}
-      <span className="hidden md:inline-block truncate text-sm">
+      {/* label (desktop only) */}
+      <span className="hidden md:inline-block truncate text-sm font-medium">
         {link.name}
       </span>
     </NavLink>

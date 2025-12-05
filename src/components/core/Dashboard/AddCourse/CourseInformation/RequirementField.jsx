@@ -1,81 +1,124 @@
-import React, { useEffect, useState } from 'react'
-import { MdClose } from 'react-icons/md'
+import React, { useEffect, useState } from "react";
+import { MdClose } from "react-icons/md";
 
-const RequirementField = ({name, label, register, errors, setValue , getValues}) => {
+const RequirementField = ({
+  name,
+  label,
+  register,
+  errors,
+  setValue,
+  getValues,
+}) => {
+  const [requirement, setRequirement] = useState("");
+  const [requirementList, setRequirementList] = useState([]);
 
-    const [requirement , setRequirement] = useState("");
-    const [requirementList , setRequirementList] = useState([]);
+  useEffect(() => {
+    register(name, {
+      required: true,
+      validate: (value) => value && value.length > 0,
+    });
+  }, [name, register]);
 
-    useEffect(()=>{
-        register(name, {
-            required: true,
-            // validate:(value) => value.length > 0
-        })
-    },[])
+  useEffect(() => {
+    setValue(name, requirementList);
+  }, [requirementList, name, setValue]);
 
-    useEffect(()=> {
-        setValue(name ,requirementList)
-    },[requirementList])
+  const handleAddRequirement = () => {
+    const value = requirement.trim();
+    if (!value) return;
+    setRequirementList((prev) => [...prev, value]);
+    setRequirement("");
+  };
 
-    const handleAddRequirement = () =>{
-        if(requirement){
-            setRequirementList([...requirementList, requirement]);
-        }
-        setRequirement("");
+  const handleRemoveRequirement = (index) => {
+    setRequirementList((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddRequirement();
     }
-    const handleRemoveRequirement = (index) =>{
-        const updatedRequirementList = [...requirementList];
-        updatedRequirementList.splice(index, 1);
-        setRequirementList(updatedRequirementList);
-    }
+  };
+
+  const hasError = Boolean(errors?.[name]);
 
   return (
-    <div>
-        <label htmlFor={name} className=' text-sm text-richblack-100'>{label}<sup className='text-pink-500 '>*</sup></label>
-        <div>
-            <input
-                type='text'
-                id={name}
-                value={requirement}
-                placeholder='Enter requirements'
-                onChange={(e) => setRequirement(e.target.value)}
-                className=' bg-richblack-700 text-md text-richblack-5 rounded-md shadow-sm shadow-richblack-300 py-2 px-3 w-full'
-            />
-            <button
-                type='button'
-                onClick={handleAddRequirement}
-                className='text-yellow-5 font-semibold'
+    <div className="flex flex-col gap-1.5">
+      {/* Label */}
+      <label
+        htmlFor={name}
+        className="text-xs font-medium uppercase tracking-wide text-richblack-200"
+      >
+        {label} <sup className="text-pink-300">*</sup>
+      </label>
+
+      {/* Input + Add inside same field */}
+      <div className="relative w-full">
+        <input
+          id={name}
+          type="text"
+          value={requirement}
+          placeholder="Add a requirement and press Enter"
+          onChange={(e) => setRequirement(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="form-style w-full pr-24"
+        />
+
+        <button
+          type="button"
+          onClick={handleAddRequirement}
+          className="
+            absolute right-2 top-1/2 -translate-y-1/2
+            rounded-lg px-3 py-1.5 text-[12px] font-semibold
+            bg-white/15 text-white
+            hover:bg-white/25
+            transition
+          "
+        >
+          Add
+        </button>
+      </div>
+
+      {/* List of requirements */}
+      {requirementList.length > 0 && (
+        <ul className="mt-3 flex flex-wrap gap-2">
+          {requirementList.map((req, index) => (
+            <li
+              key={index}
+              className="
+                flex items-center gap-2
+                rounded-full px-3 py-1
+                bg-white/10 border border-white/15
+                text-[12px] text-white
+                backdrop-blur-md
+              "
             >
-                Add
-            </button>
-        </div>
+              <span className="truncate">{req}</span>
+              <button
+                type="button"
+                onClick={() => handleRemoveRequirement(index)}
+                className="
+                  flex items-center justify-center
+                  h-4 w-4 rounded-full bg-black/30
+                  hover:bg-black/50 transition
+                "
+              >
+                <MdClose className="text-[10px]" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
-        { requirementList.length > 0 && (
-                <ul>
-                    { requirementList.map((requirement , index) =>(
-                            <li key={index} className=' flex gap-2 items-center text-richblack-5'>
-                                <span>{requirement}</span>
-                                <button 
-                                    type='button'
-                                    onClick={() => handleRemoveRequirement(index)}
-                                    className=' text-black text-md bg-caribbeangreen-300 rounded-full p-1 hover:bg-caribbeangreen-400 transition duration-200 ease-in-out'
-                                >
-                                    <MdClose />
-                                </button>
-                            </li>
-                        ))
-                    }
-                </ul>
-            )       
-        }
-        { errors[name] && (
-                <span>
-                    {label} is required
-                </span>
-            )
-        }
+      {/* Error */}
+      {hasError && (
+        <span className="ml-1 text-xs tracking-wide text-pink-200">
+          {label} is required
+        </span>
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default RequirementField
+export default RequirementField;
