@@ -12,4 +12,4 @@ export const formatDate = (dateString) => {
         .padStart(2, "0")} ${period}`;
     
     return ` ${formatedDate} | ${formatedTime}`
-}
+    }

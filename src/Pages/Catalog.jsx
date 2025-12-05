@@ -113,7 +113,7 @@ const Catalog = () => {
 
       {/*section 02*/}
       <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
-        <div className=' text-2xl font-bold text-white py-10'>
+        <div className=' text-2xl font-bold py-10'>
           Top Courses in {catalogPageData?.data?.differentCategory?.name}
         </div>
         <div className="py-8">

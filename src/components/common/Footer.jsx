@@ -7,6 +7,14 @@ import Logo from "../../assets/Logo/Logo-Full-Light.png";
 // Icons
 import { FaFacebook, FaTwitter, FaYoutube } from "react-icons/fa";
 
+/**
+ * Simplified, warm & glassy footer.
+ * - Reduced links for clarity
+ * - Glass/frosted container
+ * - Warm gradient accent and soft shadows
+ * - Responsive: stacks on mobile
+ */
+
 const Footer = () => {
   const companyLinks = [
     { title: "About", to: "/about" },
@@ -51,10 +59,16 @@ const Footer = () => {
                 Learn practical skills with focused, project-led courses. Friendly, warm, and built for real learners.
               </p>
 
-              <div className="flex items-center  text-white gap-3">
-                <FaFacebook />
-                <FaTwitter />
-                <FaYoutube />
+              <div className="flex items-center gap-3">
+                <a href="#" aria-label="Facebook" className="text-richblack-300 hover:text-white transition">
+                  <FaFacebook />
+                </a>
+                <a href="#" aria-label="Twitter" className="text-richblack-300 hover:text-white transition">
+                  <FaTwitter />
+                </a>
+                <a href="#" aria-label="YouTube" className="text-richblack-300 hover:text-white transition">
+                  <FaYoutube />
+                </a>
               </div>
             </div>
 

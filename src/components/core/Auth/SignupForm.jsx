@@ -81,14 +81,13 @@ function SignupForm() {
   ]
 
   return (
-    <div >
+    <div>
       {/* Tab */}
-      <Tab tabData={tabData} field={accountType} setField={setAccountType}  />
+      <Tab tabData={tabData} field={accountType} setField={setAccountType} />
       {/* Form */}
       <form onSubmit={handleOnSubmit} className="flex w-full flex-col gap-y-4">
-        {/* Name row - stacked on mobile, side-by-side on sm+ */}
-        <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
-          <label className="w-full">
+        <div className="flex gap-x-4">
+          <label>
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               First Name <sup className="text-pink-200">*</sup>
             </p>
@@ -99,12 +98,13 @@ function SignupForm() {
               value={firstName}
               onChange={handleOnChange}
               placeholder="Enter first name"
-              style={{ boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)" }}
-              className="form-style"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
             />
           </label>
-
-          <label className="w-full">
+          <label>
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               Last Name <sup className="text-pink-200">*</sup>
             </p>
@@ -115,32 +115,32 @@ function SignupForm() {
               value={lastName}
               onChange={handleOnChange}
               placeholder="Enter last name"
-              style={{ boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)" }}
-              className="form-style"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
             />
           </label>
         </div>
-
-        {/* Email - full width always */}
         <label className="w-full">
           <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
             Email Address <sup className="text-pink-200">*</sup>
           </p>
           <input
             required
-            type="email"
+            type="text"
             name="email"
             value={email}
             onChange={handleOnChange}
             placeholder="Enter email address"
-            style={{ boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)" }}
-            className="form-style"
+            style={{
+              boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+            }}
+            className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] text-richblack-5"
           />
         </label>
-
-        {/* Passwords row - stacked on mobile, side-by-side on sm+ */}
-        <div className="flex flex-col sm:flex-row gap-y-4 sm:gap-x-4">
-          <label className="relative w-full">
+        <div className="flex gap-x-4">
+          <label className="relative">
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               Create Password <sup className="text-pink-200">*</sup>
             </p>
@@ -151,24 +151,23 @@ function SignupForm() {
               value={password}
               onChange={handleOnChange}
               placeholder="Enter Password"
-              style={{ boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)" }}
-              className="form-style"
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
             />
-            <button
-              type="button"
+            <span
               onClick={() => setShowPassword((prev) => !prev)}
-              className="absolute right-3 top-[38px] z-[10] flex h-6 w-6 items-center justify-center rounded"
-              aria-label={showPassword ? "Hide password" : "Show password"}
+              className="absolute right-3 top-[38px] z-[10] cursor-pointer"
             >
               {showPassword ? (
                 <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
               ) : (
                 <AiOutlineEye fontSize={24} fill="#AFB2BF" />
               )}
-            </button>
+            </span>
           </label>
-
-          <label className="relative w-full">
+          <label className="relative">
             <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
               Confirm Password <sup className="text-pink-200">*</sup>
             </p>
@@ -179,24 +178,23 @@ function SignupForm() {
               value={confirmPassword}
               onChange={handleOnChange}
               placeholder="Confirm Password"
-              style={{ boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)" }}
-              className="form-style "
+              style={{
+                boxShadow: "inset 0px -1px 0px rgba(255, 255, 255, 0.18)",
+              }}
+              className="w-full rounded-[0.5rem] bg-richblack-800 p-[12px] pr-10 text-richblack-5"
             />
-            <button
-              type="button"
+            <span
               onClick={() => setShowConfirmPassword((prev) => !prev)}
-              className="absolute right-3 top-[38px] z-[10] flex h-6 w-6 items-center justify-center rounded"
-              aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              className="absolute right-3 top-[38px] z-[10] cursor-pointer"
             >
               {showConfirmPassword ? (
                 <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
               ) : (
                 <AiOutlineEye fontSize={24} fill="#AFB2BF" />
               )}
-            </button>
+            </span>
           </label>
         </div>
-
         <button
           type="submit"
           className="mt-6 rounded-[8px] bg-yellow-50 py-[8px] px-[12px] font-medium text-richblack-900"
@@ -204,7 +202,6 @@ function SignupForm() {
           Create Account
         </button>
       </form>
-
     </div>
   )
 }
