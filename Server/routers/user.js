@@ -1,28 +1,27 @@
 const express = require('express');
 const router = express.Router()
 
-const {
-    signUp,
-    login,
-    sendotp,
-    changedPassword,
-} = require("../controllers/Auth");
+const { 
+  signup, 
+  login, 
+  sendotp, 
+  changedPassword,  
+} = require('../controllers/Auth');
 
 const {
-    resetPasswordToken,
-    resetPassword,
-} = require("../controllers/ResetPasseord")
+  resetPassword,
+  resetPasswordToken
+} = require('../controllers/ResetPassword')
 
-const {auth} = require("../middlewares/auth");
 
-// Router for login SIgnUp , and Authentication
+const { auth } = require('../middlewares/auth')
 
-// ***************************************************************
 //                  Authentication Route
 // ***************************************************************
 
 // route for signUp
-router.post('/signup', signUp);
+router.post('/signup', signup);
+
 
 // router for login
 router.post('/login', login);
@@ -39,7 +38,6 @@ router.post('/changePassword', auth, changedPassword);
 
 // router for generating a reset password token
 router.post('/reset-password-token', resetPasswordToken);
-
 // router for resseting user password
 router.post('/reset-password', resetPassword);
 

@@ -43,12 +43,13 @@ const CourseDetails = () => {
   // Claculate Avg Value
   const [avgReviewCount, setAverageReviewCount] = useState(0)
   useEffect(()=> {
-    const count = GetAvgRating(response?.data?.courseDetails.ratingAndReview);
-    setAverageReviewCount(count);
+    const count = GetAvgRating(response?.data?.courseDetails?.ratingAndReview);
+    const safeCount = Number.isFinite(count) ? Number(parseFloat(count).toFixed(1)) : 0;
+    setAverageReviewCount(safeCount);
   },[response])
 
   //Collapse All
-  const [isActive, setIsActive] = useState(Array(0))
+  const [isActive, setIsActive] = useState([])
   const handleActive = (id) => {
   // console.log("called", id)
     setIsActive(
@@ -63,7 +64,7 @@ const CourseDetails = () => {
   useEffect(()=> {
     let lectures = 0;
     response?.data?.courseDetails?.courseContent?.forEach((sec) => {
-      lectures += sec.subSection.length || 0
+      lectures += sec.subSection?.length || 0
     })
     setTotalNoOfLectures(lectures);
   },[response]);
@@ -148,10 +149,10 @@ const CourseDetails = () => {
                   Review_Count={avgReviewCount} Star_Size={24} 
                 />
                 <span>
-                  {`(${ratingAndReview.length}  reviews ) `}
+                  {`(${ratingAndReview.length || 0}  reviews ) `}
                 </span>
                 <span>
-                  {`${studentsEnrolled.length} Students enrolled`}
+                  {`${studentsEnrolled.length || 0} Students enrolled`}
                 </span>
               </div>
 
