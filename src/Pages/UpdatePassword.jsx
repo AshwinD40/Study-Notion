@@ -1,127 +1,117 @@
-import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { resetPassword } from '../services/operations/authAPI';
-import { useLocation } from 'react-router-dom';
-import { FaEye, FaEyeSlash  } from "react-icons/fa";
-import { FaArrowLeftLong } from "react-icons/fa6";
-import { Link } from 'react-router-dom';
+import { useState } from "react"
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
+import { BiArrowBack } from "react-icons/bi"
+import { useDispatch, useSelector } from "react-redux"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 
-const UpdatePassword = () => {
-    const [formData , setFormData] = useState(
-        {
-            password:"",
-            confirmPassword:"",
-        }
-    )
-    const dispatch = useDispatch();
-    const location = useLocation()
-    const {loading} = useSelector( (state) => state.auth);
-    const [showPassword , setShowPassword] = useState(false)
-    const [showConfirmPassword , setShowConfirmPassword] = useState(false)
+import { resetPassword } from "../services/operations/authAPI"
 
-    const {password, confirmPassword} = formData;
+function UpdatePassword() {
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const { loading } = useSelector((state) => state.auth)
+  const [formData, setFormData] = useState({
+    password: "",
+    confirmPassword: "",
+  })
 
-    const handleOnChange = (e) =>{
-        setFormData((prevData) =>(
-            {
-                ...prevData ,
-                [e.target.name] : e.target.value,
-            }
-        )) 
-    }
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
-    const handleOnSubmit = (e) =>{
-        e.preventDefault();
-        const token = location.pathname.split('/').at(-1);
-        dispatch(resetPassword(password, confirmPassword, token ))
-    }
+  const { password, confirmPassword } = formData
+
+  const handleOnChange = (e) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      [e.target.name]: e.target.value,
+    }))
+  }
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault()
+    const token = location.pathname.split("/").at(-1)
+    dispatch(resetPassword(password, confirmPassword, token, navigate))
+  }
 
   return (
-    <div className=' flex flex-col justify-center items-center text-white mt-32'>
-        {
-            loading ? 
-            (
-                <div>
-                    Loading. . .
-                </div>
-            ) : (
-                
-                <div className=' flex flex-col gap-2 h-[500px] w-[360px]'>
-                    <h1 className=' text-3xl font-bold '>Choose new password</h1>
-                    <p className='text-md text-richblack-300 mb-2'>
-                    Almost done. Enter your new password and youre all set.</p>
+    <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
+      {loading ? (
+        <div className="spinner"></div>
+      ) : (
+        <div className="max-w-[500px] p-4 lg:p-8">
+          <h1 className="text-[1.875rem] font-semibold leading-[2.375rem] text-richblack-5">
+            Choose new password
+          </h1>
+          <p className="my-4 text-[1.125rem] leading-[1.625rem] text-richblack-100">
+            Almost done. Enter your new password and youre all set.
+          </p>
+          <form onSubmit={handleOnSubmit}>
+            <label className="relative">
+              <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+                New Password <sup className="text-pink-200">*</sup>
+              </p>
+              <input
+                required
+                type={showPassword ? "text" : "password"}
+                name="password"
+                value={password}
+                onChange={handleOnChange}
+                placeholder="Enter Password"
+                className="form-style w-full !pr-10"
+              />
+              <span
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-3 top-[38px] z-[10] cursor-pointer"
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
+                ) : (
+                  <AiOutlineEye fontSize={24} fill="#AFB2BF" />
+                )}
+              </span>
+            </label>
+            <label className="relative mt-3 block">
+              <p className="mb-1 text-[0.875rem] leading-[1.375rem] text-richblack-5">
+                Confirm New Password <sup className="text-pink-200">*</sup>
+              </p>
+              <input
+                required
+                type={showConfirmPassword ? "text" : "password"}
+                name="confirmPassword"
+                value={confirmPassword}
+                onChange={handleOnChange}
+                placeholder="Confirm Password"
+                className="form-style w-full !pr-10"
+              />
+              <span
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute right-3 top-[38px] z-[10] cursor-pointer"
+              >
+                {showConfirmPassword ? (
+                  <AiOutlineEyeInvisible fontSize={24} fill="#AFB2BF" />
+                ) : (
+                  <AiOutlineEye fontSize={24} fill="#AFB2BF" />
+                )}
+              </span>
+            </label>
 
-                    <form onSubmit={handleOnSubmit}
-                    className='flex flex-col gap-2'>
-
-                        <label className='flex flex-col  '>
-                            <p className=' text-[13px] font-semibold text-richblack-100'>New Password<span className='text-pink-300 pl-1 text-sm'>*</span></p>
-                            <input
-                                required
-                                type={showPassword ? "text" : "password"}
-                                name="password"
-                                value={password}
-                                placeholder='Password'
-                                onChange={handleOnChange}
-                                className=' relative w-full h-11 rounded-md px-3 bg-richblack-800 text-white shadow-sm shadow-richblack-200'
-                                
-                            />
-                            <span
-                            onClick={()=> setShowPassword((prev) =>!prev)}
-                            className="absolute right-[600px] top-[325px] cursor-pointer"
-                            >
-                                {
-                                    showPassword 
-                                    ? <FaEyeSlash fontSize={24}/> 
-                                    : <FaEye fontSize={24}/>
-                                }
-                            </span>
-                            
-                        
-                        </label>
-
-                        <label className='flex flex-col gap-1 mb-6'>
-                            <p className=' text-[13px] font-semibold text-richblack-100'>Confirm new Password<span className='text-pink-300 pl-1 text-sm'>*</span></p>
-                            <input
-                                required
-                                type={showConfirmPassword ? "text" : "password"}
-                                name="confirmPassword"
-                                value={confirmPassword}
-                                placeholder='Confirm Password'
-                                onChange={handleOnChange}
-                                className=' relative w-full h-11 rounded-md px-3 bg-richblack-800 text-white shadow-sm shadow-richblack-200'
-                            />
-                            <span
-                            onClick={()=> setShowConfirmPassword((prev) =>!prev)}
-                            className="absolute right-[600px] top-[400px] cursor-pointer"
-                            >
-                                {
-                                    showConfirmPassword 
-                                    ? <FaEyeSlash fontSize={24}/> 
-                                    : <FaEye fontSize={24}/>
-                                }
-                            </span>
-                        
-                        </label>
-
-                        <button type='submit'
-                        className=' h-11 w-full bg-yellow-100 rounded-lg text-black text-sm font-semibold'>
-                                Reset Password
-                        </button>
-
-
-                    </form>
-                    <div >
-                        <Link to='/login'
-                        className=' flex flex-row items-center gap-2 text-sm' >
-                            <FaArrowLeftLong/>
-                            <p>Back to Login</p>
-                                
-                        </Link>
-                    </div>
-                </div>
-            )
-        }
+            <button
+              type="submit"
+              className="mt-6 w-full rounded-[8px] bg-yellow-50 py-[12px] px-[12px] font-medium text-richblack-900"
+            >
+              Reset Password
+            </button>
+          </form>
+          <div className="mt-6 flex items-center justify-between">
+            <Link to="/login">
+              <p className="flex items-center gap-x-2 text-richblack-5">
+                <BiArrowBack /> Back To Login
+              </p>
+            </Link>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

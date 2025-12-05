@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const dotenv = require("dotenv");
+const os = require("os");
+dotenv.config();
 
 const userRoute = require('./routers/user');
 const profileRoute = require('./routers/profile');
@@ -10,11 +13,9 @@ const contactUsRoute = require("./routers/Contact");
 const database = require('./config/database');
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
-const {cloudinaryConnect} = require("./config/cloudinary");
+const { cloudinaryConnect } = require("./config/cloudinary");
 const fileUpload = require("express-fileupload");
-const dotenv = require("dotenv");
 
-dotenv.config();
 const PORT = process.env.PORT || 3000
 
 // connect with database
@@ -25,15 +26,15 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin:"*",
-        credentials:true,
+        origin: "*",
+        credentials: true,
     })
 )
 
 app.use(
     fileUpload({
-        useTempFiles:true,
-        tempFileDir:"/tmp/",
+        useTempFiles: true,
+        tempFileDir: os.tmpdir(),
     })
 )
 
@@ -48,13 +49,14 @@ app.use('/api/v1/payment', paymentRoute);
 app.use("/api/v1/reach", contactUsRoute);
 
 // app.get default route
-app.get("/", (req , res)=>{
+app.get("/", (req, res) => {
     return res.json({
-        success:true,
+        success: true,
         message: "Welcome to your server ",
     });
 });
 
-app.listen(PORT, ()=>{
-    console.log(`Server is running on port ${PORT}`) 
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log("--- SERVER RESTARTED AT " + new Date().toISOString() + " [FORCE RESTART] ---");
 })
