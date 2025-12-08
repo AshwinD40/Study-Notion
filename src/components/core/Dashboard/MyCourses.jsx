@@ -24,20 +24,22 @@ const MyCourses = () => {
     },[token])
   return (
     <div className=' text-white'>
-        <div className=' flex justify-between mb-10'>      
-            <h1 className=' text-richblack-5 font-bold text-2xl'> My Courses</h1>
-            <IconBtn 
-              text="Add New"
-              onclick={() => {
-                navigate("/dashboard/add-course")
-              }}
-            >
-              <IoMdAddCircleOutline />
-            </IconBtn>
-        
-        </div>
+      <div className=' flex justify-between mb-10'>      
+        <h1 className=' text-richblack-5 font-bold text-2xl'>   
+          My Courses
+        </h1>
+        <IconBtn 
+          text="Add New"
+          onclick={() => {
+            navigate("/dashboard/add-course")
+          }}
+        >
+          <IoMdAddCircleOutline />
+          </IconBtn>
+      
+      </div>
 
-        {courses && <CourseTable  courses={courses} setCourses={setCourses}/>}
+      {courses && <CourseTable  courses={courses} setCourses={setCourses}/>}
     </div>
   )
 

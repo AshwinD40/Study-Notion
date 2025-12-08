@@ -115,6 +115,7 @@ details > summary::-webkit-details-marker {
   /* background-size: contain; */
 }
 
+
 @keyframes spinner-bulqg1 {
     0% {
       clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);

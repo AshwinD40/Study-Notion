@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     gradientColorStopPositions: {
       38: '38%',
-      24:'24%',
+      24: '24%',
       33: '33%',
     },
     fontFamily: {
@@ -113,7 +113,7 @@ module.exports = {
         700: "#553F02",
         800: "#3D2A01",
         900: "#251400",
-      },red: {
+      }, red: {
         5: "#FFE5E5",
         25: "#FFB8B8",
         50: "#FF8A8A",
@@ -171,6 +171,15 @@ module.exports = {
       maxWidth: {
         maxContent: "1260px",
         maxContentTab: "650px"
+      },
+      animation: {
+        ripple: "ripple 0.5s ease-out",
+      },
+      keyframes: {
+        ripple: {
+          "0%": { transform: "scale(0.3)", opacity: "0.9" },
+          "100%": { transform: "scale(3.2)", opacity: "0" },
+        },
       },
     },
   },

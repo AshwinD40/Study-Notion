@@ -97,9 +97,14 @@ exports.verifyPayment = async (req, res) => {
 
   if (expectedSignature === razorpay_signature) {
     //enroll karwao student ko
-    await enrollStudents(courses, userId, res);
-    //return res
-    return res.status(200).json({ success: true, message: "Payment Verified" });
+    try {
+      await enrollStudents(courses, userId);
+      //return res
+      return res.status(200).json({ success: true, message: "Payment Verified" });
+    } catch (error) {
+      console.log("Enrollment error:", error);
+      return res.status(500).json({ success: false, message: "Enrollment Failed" });
+    }
   }
   return res.status(200).json({ success: "false", message: "Payment Failed" });
 
@@ -132,6 +137,9 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
       )
     )
     if (!mailResponse.success) {
+      // Log but don't fail, although for this dedicated endpoint maybe we should? 
+      // The user prompt was about enrollment email. 
+      // Keeping this consistent: if email fails here, we return error as this endpoint IS about sending email. 
       throw new Error(mailResponse.error ? mailResponse.error.message : "Email sending failed");
     }
   } catch (error) {
@@ -144,13 +152,10 @@ exports.sendPaymentSuccessEmail = async (req, res) => {
 }
 
 // enroll student
-const enrollStudents = async (courses, userId, res) => {
+const enrollStudents = async (courses, userId) => {
 
   if (!courses || !userId) {
-    return res.status(400).json({
-      success: false,
-      message: "Please provide CourseID and userID"
-    })
+    throw new Error("Please provide CourseID and userID");
   }
 
   for (const courseId of courses) {
@@ -165,10 +170,13 @@ const enrollStudents = async (courses, userId, res) => {
       );
 
       if (!enrolledCourse) {
-        return res.status(404).json({
-          success: false,
-          message: "Course not found"
-        })
+        // return res.status(404).json({
+        //   success: false,
+        //   message: "Course not found"
+        // })
+        // Skip course if not found? Or throw? Let's log and continue or throw.
+        // Throwing stops all enrollments. Let's throw to be safe.
+        throw new Error("Course not found");
       }
 
       const courseProgress = await CourseProgress.create({
@@ -191,28 +199,25 @@ const enrollStudents = async (courses, userId, res) => {
       console.log("Enrolled student:", enrolledStudent);
 
       ///bachhe ko mail send kardo
-      const mailResponse = await mailSender(
-        enrolledStudent.email,
-        `Successfully Enrolled into ${enrolledCourse.courseName}`,
-        courseEnrollmentEmail(
-          enrolledCourse.courseName,
-          `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+      try {
+        const mailResponse = await mailSender(
+          enrolledStudent.email,
+          `Successfully Enrolled into ${enrolledCourse.courseName}`,
+          courseEnrollmentEmail(
+            enrolledCourse.courseName,
+            `${enrolledStudent.firstName} ${enrolledStudent.lastName}`
+          )
         )
-      )
-      if (!mailResponse.success) {
-        throw new Error(mailResponse.error ? mailResponse.error.message : "Email sending failed");
+        if (!mailResponse.success) {
+          console.warn("Email sending failed for course enrollment, but enrollment successful:", mailResponse.error);
+        }
+      } catch (emailError) {
+        console.warn("Email sending exception for course enrollment, but enrollment successful:", emailError);
       }
+
     } catch (error) {
       console.log("Error while enrolling student", error);
-      return res.status(500).json({
-        success: false,
-        message: "Error while enrolling student",
-      })
+      throw new Error(error.message);
     }
   }
-
-  return res.json({
-    success: true,
-    message: "Successfully Enrolled into the course"
-  })
 }
