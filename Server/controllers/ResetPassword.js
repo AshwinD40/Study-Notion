@@ -57,19 +57,19 @@ exports.resetPasswordToken = async (req, res) => {
     `;
 
     // send email in background so we don't block the response
-    setImmediate(async () => {
-      try {
-        const mailResult = await mailSender(email, 'Reset Your Password - Action Required', html);
-        if (mailResult && mailResult.success) {
-          console.log(`[resetPasswordToken] mail sent to ${email} id=${mailResult.info?.messageId}`);
-        } else {
-          console.error(`[resetPasswordToken] mail failed for ${email}`, mailResult && mailResult.error ? mailResult.error.message : mailResult);
-          // TODO: optionally persist failed send to DB/queue for retry
-        }
-      } catch (err) {
-        console.error('[resetPasswordToken] unexpected error sending mail:', err);
+    // send email synchronously to ensure delivery
+    try {
+      const mailResult = await mailSender(email, `Reset Your Password - Action Required ${Date.now()}`, html);
+      if (mailResult && mailResult.success) {
+        console.log(`[resetPasswordToken] mail sent to ${email} id=${mailResult.info?.messageId}`);
+      } else {
+        console.error(`[resetPasswordToken] mail failed for ${email}`, mailResult && mailResult.error ? mailResult.error.message : mailResult);
+        return res.status(500).json({ success: false, message: 'Failed to send reset email' });
       }
-    });
+    } catch (err) {
+      console.error('[resetPasswordToken] unexpected error sending mail:', err);
+      return res.status(500).json({ success: false, message: 'Error sending reset email' });
+    }
 
   } catch (err) {
     console.error('[resetPasswordToken] error:', err);

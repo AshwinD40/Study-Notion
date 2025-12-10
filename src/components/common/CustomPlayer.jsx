@@ -165,241 +165,125 @@ const CustomPlayer = ({
     return () => clearHideTimer();
   }, []);
 
-  return (
+return (
+  <div ref={containerRef} className="w-full max-w-full" style={{ maxWidth: '100%' }}>
+    {/* Aspect-box: 16:9 frame */}
     <div
-      ref={containerRef}
       className="relative bg-black rounded-2xl overflow-hidden"
+      style={{ paddingTop: '56.25%' }} /* 16:9 */
       onMouseMove={handleMouseMove}
     >
-      {/* VIDEO */}
+      {/* VIDEO: contain inside 16:9, centered, no hairline */}
       <video
         ref={videoRef}
         src={src}
         poster={poster}
-        className="w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-contain bg-black block"
+        style={{ objectPosition: 'center center', display: 'block' }}
         onClick={handlePlayPause}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
       />
 
-      {/* CENTER WATER-DROP BUTTON: only when paused & not ended */}
+      {/* CENTER PLAY (same logic) */}
       {!ended && !playing && (
         <button
           onClick={handlePlayPause}
+          aria-label="Play"
           className="
-            absolute inset-0 m-auto 
-            h-24 w-24 
-            rounded-full
-            flex items-center justify-center
-            transition-transform
-            hover:scale-110 active:scale-125
+            absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
+            h-20 w-20 sm:h-24 sm:w-24 rounded-full
+            flex items-center justify-center transition-transform hover:scale-105 active:scale-110 z-30
           "
         >
-          {ripple && (
-            <span
-              className="
-                absolute inset-0 rounded-full
-                bg-white/20 animate-ripple
-              "
-            />
-          )}
-
-          <span
-            className="
-              absolute inset-0
-              rounded-full bg-white/10 
-              blur-3xl opacity-70
-            "
-          />
-
-          <IoPlay size={36} className="text-white translate-x-[2px]" />
+          {ripple && <span className="absolute inset-0 rounded-full bg-white/20 animate-ripple" />}
+          <span className="absolute inset-0 rounded-full bg-white/10 blur-3xl opacity-70" />
+          <IoPlay size={32} className="text-white translate-x-[2px]" />
         </button>
       )}
 
-      {/* BOTTOM CONTROLS: hide after 2s while playing */}
+      {/* CONTROLS: ensure inside and above video */}
       {!ended && showControls && (
         <div
           className="
-            absolute bottom-0 left-0 right-0
-            flex flex-col gap-2
-            px-4 py-3
+            absolute left-0 right-0 bottom-0 z-40
+            px-3 py-2 sm:px-4 sm:py-3
             bg-gradient-to-t from-black/85 via-black/60 to-transparent
+            flex flex-col gap-2
           "
-        >
-          {/* Seek bar */}
+        >  
           <div
             onClick={handleSeek}
             className="
-              w-full h-1.5 
-              bg-white/20 rounded-full cursor-pointer group
+              w-full
+              h-[2px]                     
+              bg-white/25                
+              rounded-full
+              cursor-pointer
+              group
+              relative
             "
           >
+            {/* Progress Line */}
             <div
-              className="h-full bg-white rounded-full relative"
+              className=" absolute left-0 top-0  h-full  bg-white  rounded-full  transition-[width] duration-150 "
               style={{ width: `${progress}%` }}
-            >
-              <span
-                className="
-                  absolute -top-1 h-3 w-3 rounded-full bg-white
-                  right-0 translate-x-1/2 opacity-0 group-hover:opacity-100
-                "
-              />
-            </div>
+            />
+
+            {/* Tiny handle dot (only visible on hover) */}
+            <div
+              className=" absolute top-1/2 -translate-y-1/2 h-2 w-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-150 "
+              style={{ left: `${progress}%`, transform: 'translate(-50%, -50%)' }}
+            />
           </div>
 
-          {/* Controls row */}
+          {/* Row */}
           <div className="flex items-center justify-between text-white">
-            {/* LEFT: Play + Time */}
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handlePlayPause}
-                className="
-                  relative 
-                  h-12 w-12 rounded-full
-                  bg-transparent
-                  flex items-center justify-center
-                  hover:scale-110 active:scale-125
-                  transition-all
-                "
-              >
-                {playing ? (
-                  <IoPause size={20} className="text-white" />
-                ) : (
-                  <IoPlay
-                    size={20}
-                    className="text-white translate-x-[1px]"
-                  />
-                )}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <button onClick={handlePlayPause} className="h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center" aria-label={playing ? 'Pause' : 'Play'}>
+                {playing ? <IoPause size={18} className="text-white" /> : <IoPlay size={18} className="text-white translate-x-[1px]" />}
               </button>
 
-              <span className="text-xs text-white/80">
-                {formatTime(currentTime)} / {formatTime(duration)}
-              </span>
+              <span className="text-xs text-white/80 tabular-nums">{formatTime(currentTime)} / {formatTime(duration)}</span>
             </div>
 
-            {/* RIGHT: volume, speed, fullscreen */}
-            <div className="flex items-center gap-4">
-              {/* Volume */}
-              <button
-                onClick={toggleMute}
-                className="
-                  h-8 w-8 rounded-full bg-white/5 hover:bg-white/15
-                  flex items-center justify-center
-                "
-              >
-                {muted || volume === 0 ? (
-                  <IoVolumeMute className="text-white" />
-                ) : (
-                  <IoVolumeHigh className="text-white" />
-                )}
+            <div className="flex items-center gap-2 sm:gap-4">
+              <button onClick={toggleMute} className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center" aria-label={muted ? 'Unmute' : 'Mute'}>
+                {muted || volume === 0 ? <IoVolumeMute className="text-white" /> : <IoVolumeHigh className="text-white" />}
               </button>
 
-              <input
-                type="range"
-                min={0}
-                max={1}
-                step={0.05}
-                value={muted ? 0 : volume}
-                onChange={handleVolumeChange}
-                className="w-20 accent-white cursor-pointer"
-              />
+              <input type="range" min={0} max={1} step={0.05} value={muted ? 0 : volume} onChange={handleVolumeChange} className="hidden sm:block w-20 accent-white cursor-pointer" aria-label="Volume" />
 
-              {/* Speed */}
-              <button
-                onClick={changePlaybackRate}
-                className="
-                  px-3 py-1 rounded-full
-                  bg-white/5 hover:bg-white/15 text-xs
-                "
-              >
+              <button onClick={changePlaybackRate} className="px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-white/5 hover:bg-white/15 text-xs" aria-label="Playback speed">
                 {playbackRate}x
               </button>
 
-              {/* Fullscreen */}
-              <button
-                onClick={toggleFullscreen}
-                className="
-                  h-8 w-8 rounded-full bg-white/5 hover:bg-white/15
-                  flex items-center justify-center
-                "
-              >
-                {isFullscreen ? (
-                  <IoContract className="text-white" />
-                ) : (
-                  <IoExpand className="text-white" />
-                )}
+              <button onClick={toggleFullscreen} className="h-8 w-8 rounded-full bg-white/5 hover:bg-white/15 flex items-center justify-center" aria-label={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}>
+                {isFullscreen ? <IoContract className="text-white" /> : <IoExpand className="text-white" />}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* END OVERLAY */}
+      {/* END OVERLAY (same) */}
       {ended && (
-        <div
-          className="
-            absolute inset-0 
-            bg-black/75 backdrop-blur-md
-            flex items-center justify-center gap-8
-            text-white
-          "
-        >
-          {onPrev && (
-            <button
-              onClick={onPrev}
-              className="
-                h-16 w-16 rounded-full
-                bg-white/10 hover:bg-white/20
-                flex items-center justify-center
-              "
-            >
-              <IoPlaySkipBack size={28} />
-            </button>
-          )}
+        <div className="absolute inset-0 bg-black/75 backdrop-blur-md flex items-center justify-center gap-6 sm:gap-8 text-white z-40">
+          {onPrev && <button onClick={onPrev} className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center" aria-label="Previous"><IoPlaySkipBack size={24} /></button>}
 
-          <button
-            onClick={() => {
-              if (!videoRef.current) return;
-              videoRef.current.currentTime = 0;
-              videoRef.current.play();
-              setEnded(false);
-              setPlaying(true);
-              setShowControls(true);
-              scheduleHideControls();
-            }}
-            className="
-              relative
-              h-20 w-20 rounded-full
-              bg-transparent
-              flex items-center justify-center
-              hover:scale-110 transition
-            "
-          >
-            <span
-              className="
-                absolute inset-0 bg-white/15 rounded-full blur-2xl
-              "
-            />
-            <IoPlay size={32} className="translate-x-[2px]" />
+          <button onClick={() => { if (!videoRef.current) return; videoRef.current.currentTime = 0; videoRef.current.play(); setEnded(false); setPlaying(true); setShowControls(true); scheduleHideControls(); }} className="relative h-16 w-16 sm:h-20 sm:w-20 rounded-full flex items-center justify-center hover:scale-105 transition" aria-label="Replay">
+            <span className="absolute inset-0 bg-white/15 rounded-full blur-2xl" />
+            <IoPlay size={28} className="translate-x-[2px]" />
           </button>
 
-          {onNext && (
-            <button
-              onClick={onNext}
-              className="
-                h-16 w-16 rounded-full
-                bg-white/10 hover:bg-white/20
-                flex items-center justify-center
-              "
-            >
-              <IoPlaySkipForward size={28} />
-            </button>
-          )}
+          {onNext && <button onClick={onNext} className="h-14 w-14 sm:h-16 sm:w-16 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center" aria-label="Next"><IoPlaySkipForward size={24} /></button>}
         </div>
       )}
     </div>
-  );
+  </div>
+);
+
 };
 
 export default CustomPlayer;

@@ -29,7 +29,7 @@ async function sendVerificationEmail(email, otp) {
 		console.log("OTP Model: Sending verification email to", email);
 		const mailResponse = await mailSender(
 			email,
-			"Verification Email",
+			`Verification Email ${Date.now()}`,
 			emailTemplate(otp)
 		);
 		console.log("OTP Model: Mail response received", mailResponse);

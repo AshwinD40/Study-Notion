@@ -89,7 +89,17 @@ function LoginForm() {
       >
         Log In
       </button>
+      <p className="mt-2 text-center text-sm text-richblack-5 opacity-80">
+        New here?{" "}
+        <Link
+          to="/signup"
+          className="ml-1 text-yellow-50 underline hover:opacity-100 transition"
+        >
+          Create an account
+        </Link>
+      </p>
     </form>
+    
   )
 }
 

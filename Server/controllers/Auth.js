@@ -129,194 +129,193 @@ exports.signup = async (req, res) => {
 
 // Login Handler
 exports.login = async (req, res) => {
-    try {
+  try {
+    // fetch data from req ki body
+    const { email, password } = req.body;
 
-        // fetch data from req ki body
-        const { email, password } = req.body;
-
-        // validation of data
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Please enter all the fields",
-            })
-        }
-
-        // check user exist or not
-        const user = await User.findOne({ email }).populate("additionalDetails");
-        if (!user) {
-            return res.status(401).json({
-                success: false,
-                message: "User does not exist,please signUp",
-            })
-        }
-        const matched = await bcrypt.compare(password, user.password);
-        if (!matched) {
-            return res.status(401).json({
-                success: false,
-                message: "Password is incorrect",
-            })
-        }
-
-        const payload = {
-            email: user.email,
-            id: user._id,
-            accountType: user.accountType,
-        };
-        const token = jwt.sign(payload, process.env.JWT_SECRET, {
-            expiresIn: "24h",
-        });
-
-        const safeUser = user.toObject();
-        safeUser.password = undefined;
-
-        const cookieOptions = {
-            expiresIn: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-            httpOnly: true,
-        }
-
-        res.cookie("token", token, cookieOptions).status(200).json({
-            success: true,
-            token,
-            user: safeUser,
-            message: "Loged In successfully",
-        })
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            success: false,
-            message: "Something went wrong ,Please try again later",
-        })
+    // validation of data
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter all the fields",
+      })
     }
+
+    // check user exist or not
+    const user = await User.findOne({ email }).populate("additionalDetails");
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User does not exist,please signUp",
+      })
+    }
+    const matched = await bcrypt.compare(password, user.password);
+    if (!matched) {
+      return res.status(401).json({
+        success: false,
+        message: "Password is incorrect",
+      })
+    }
+
+    const payload = {
+      email: user.email,
+      id: user._id,
+      accountType: user.accountType,
+    };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
+
+    const safeUser = user.toObject();
+    safeUser.password = undefined;
+
+    const cookieOptions = {
+      expiresIn: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      httpOnly: true,
+    }
+
+    res.cookie("token", token, cookieOptions).status(200).json({
+      success: true,
+      token,
+      user: safeUser,
+      message: "Loged In successfully",
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong ,Please try again later",
+    })
+  }
 }
 
 // Send OTP For Email Verification
 exports.sendotp = async (req, res) => {
   try {
-    const { email } = req.body
+    const { email } = req.body;
 
-    // Check if user is already present
-    // Find user with provided email
-    const checkUserPresent = await User.findOne({ email })
-    // to be used in case of signup
-
-    // If user found with provided email
+    const checkUserPresent = await User.findOne({ email });
     if (checkUserPresent) {
-      // Return 401 Unauthorized status code with error message
       return res.status(401).json({
         success: false,
-        message: `User is Already Registered`,
-      })
+        message: "User is Already Registered",
+      });
     }
 
-    var otp = otpGenerator.generate(6, {
+    let otp = otpGenerator.generate(6, {
       upperCaseAlphabets: false,
       lowerCaseAlphabets: false,
       specialChars: false,
-    })
-    const result = await OTP.findOne({ otp: otp })
-    console.log("Result is Generate OTP Func")
-    console.log("OTP", otp)
-    console.log("Result", result)
-    while (result) {
+    });
+
+    // ensure OTP not duplicated (basic, but fine)
+    let existing = await OTP.findOne({ otp });
+    while (existing) {
       otp = otpGenerator.generate(6, {
         upperCaseAlphabets: false,
-      })
+        lowerCaseAlphabets: false,
+        specialChars: false,
+      });
+      existing = await OTP.findOne({ otp });
     }
-    const otpPayload = { email, otp }
-    const otpBody = await OTP.create(otpPayload)
-    console.log("OTP Body", otpBody)
-    res.status(200).json({
-      success: true,
-      message: `OTP Sent Successfully`,
-      otp,
-    })
-  } catch (error) {
-    console.log(error.message)
-    return res.status(500).json({ success: false, error: error.message })
-  }
-}
 
+    const otpBody = await OTP.create({
+      email,
+      otp,
+      used: false,
+      // if your schema has timestamps, fine; else add expiresAt here if needed
+    });
+
+    console.log("OTP created:", otpBody);
+
+    // email handled by OTP model pre-save hook
+
+    return res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+      // don’t send otp back in prod; keep it only in email
+      // otp,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Could not send OTP",
+      error: error.message,
+    });
+  }
+};
 
 // Change password
 exports.changedPassword = async (req, res) => {
-
-    try {
-        // get user details
-        const userDetails = await User.findById(req.user.id);
-        if (!userDetails) {
-            return res.status(404).json({
-                success: false,
-                message: "User not found",
-            })
-        }
-
-        // get data from req.body
-        const { oldPassword, newPassword } = req.body
-        // validation
-        const isPasswordMatch = await bcrypt.compare(
-            oldPassword,
-            userDetails.password
-        )
-        if (!isPasswordMatch) {
-            // if old password does not match , return 401(unauthorized)
-            return res.status(401).json({
-                success: false,
-                message: "Old password is incorrect",
-            })
-        }
-
-        // update password 
-        const encryptedPassword = await bcrypt.hash(newPassword, 10);
-        const updatedUserDetails = await User.findByIdAndUpdate(
-            req.user.id,
-            { password: encryptedPassword },
-            { new: true }
-        )
-
-        // send mail - password Updated successfully
-
-        try {
-            const emailResponse = await mailSender(
-                updatedUserDetails.email,
-                "Your Password has been updated successfully",
-                passwordUpdated(
-                    updatedUserDetails.email,
-                    `Hello ${updatedUserDetails.firstName} ${updatedUserDetails.lastName},
-                    <br><br>
-                    Your password has been changed successfully. If you did not perform this action, please contact our support team immediately.
-                    <br><br>
-                    Regards,<br>Team Support`
-                )
-
-            )
-            if (!emailResponse.success) {
-                throw new Error(emailResponse.error ? emailResponse.error.message : "Email sending failed");
-            }
-            console.log("Password updated email send:", emailResponse.response);
-
-        } catch (error) {
-            console.error("Failed to send Password change email", error)
-            return res.status(500).json({
-                success: false,
-                message: "Failed to send change password mail to user",
-                error: error.message
-            })
-
-        }
-        // return success res
-        return res.status(200).json({
-            success: true,
-            message: "password updated successfully",
-        })
+  try {
+    const userDetails = await User.findById(req.user.id);
+    if (!userDetails) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
     }
-    catch (error) {
-        console.log("Error occurred while updating password", error);
-        return res.status(500).json({
-            success: false,
-            message: "something went wrong while updating password",
-            error: error.message
-        });
-    };
 
+    const { oldPassword, newPassword } = req.body;
+
+    const isPasswordMatch = await bcrypt.compare(
+      oldPassword,
+      userDetails.password
+    );
+    if (!isPasswordMatch) {
+      return res.status(401).json({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
+
+    const encryptedPassword = await bcrypt.hash(newPassword, 10);
+    const updatedUserDetails = await User.findByIdAndUpdate(
+      req.user.id,
+      { password: encryptedPassword },
+      { new: true }
+    );
+
+    // fire email, but don't fail password update just because email fails
+    try {
+      const html = passwordUpdated(
+        updatedUserDetails.email,
+        `Hello ${updatedUserDetails.firstName} ${updatedUserDetails.lastName},
+        <br><br>
+        Your password has been changed successfully. If you did not perform this action, please contact our support team immediately.
+        <br><br>
+        Regards,<br>Team Support`
+      );
+
+      const emailResponse = await mailSender(
+        updatedUserDetails.email,
+        "Your password has been updated successfully",
+        html
+      );
+
+      if (!emailResponse.success) {
+        console.error("Password update email failed:", emailResponse.error);
+        // but don't throw; password is already changed
+      } else {
+        console.log("Password updated email sent:", emailResponse.info.messageId);
+      }
+    } catch (err) {
+      console.error("Error while sending password update email:", err);
+      // again, don't break the main flow
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Password updated successfully",
+    });
+  } catch (error) {
+    console.log("Error occurred while updating password", error);
+    return res.status(500).json({
+      success: false,
+      message: "Something went wrong while updating password",
+      error: error.message,
+    });
+  }
 };
+

@@ -2,7 +2,7 @@ import { useState } from "react"
 import { toast } from "react-hot-toast"
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai"
 import { useDispatch } from "react-redux"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 import { sendOtp } from "../../../services/operations/authAPI"
 import { setSignupData } from "../../../slices/authSlice"
@@ -204,6 +204,15 @@ function SignupForm() {
           Create Account
         </button>
       </form>
+      <p className="mt-2 text-center text-sm text-richblack-5 opacity-80">
+        Already have an account?{" "}
+        <Link
+          to="/login"
+          className="ml-1 text-yellow-50 underline hover:opacity-100 transition"
+        >
+          Login
+        </Link>
+      </p>
 
     </div>
   )
