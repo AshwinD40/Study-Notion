@@ -18,7 +18,6 @@ body {
   flex-direction: column;
 }
 
-/* ===== Scrollbar CSS ===== */
 /* Firefox */
 * {
   scrollbar-width: auto;
@@ -110,15 +109,20 @@ details > summary::-webkit-details-marker {
     spinner-oaa3wk 1.6s infinite linear;
 }
 
-.homepage_bg {
-  background: url("../src/assets/Images/bghome.svg");
-  /* background-size: contain; */
-}
+.homepage_bg { background: url("../src/assets/Images/bghome.svg"); }
 
 
 @keyframes spinner-bulqg1 {
     0% {
-      clip-path: polygon(50% 50%, 0 0, 50% 0%, 50% 0%, 50% 0%, 50% 0%, 50% 0%);
+      clip-path: polygon(
+        50% 50%, 
+        0 0, 
+        50% 0%, 
+        50% 0%, 
+        50% 0%, 
+        50% 0%, 
+        50% 0%
+      );
     }
   
     12.5% {
@@ -226,7 +230,6 @@ details > summary::-webkit-details-marker {
   width: 100%;
   height: 100%;
 }
-  /* Buttons */
   .yellowButton {
     @apply cursor-pointer rounded-md bg-yellow-50 px-[20px] py-[8px] font-semibold text-richblack-900;
   }

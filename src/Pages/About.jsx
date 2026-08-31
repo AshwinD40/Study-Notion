@@ -3,13 +3,13 @@ import FoundingStory from "../assets/Images/FoundingStory.png"
 import BannerImage1 from "../assets/Images/aboutus1.webp"
 import BannerImage2 from "../assets/Images/aboutus2.webp"
 import BannerImage3 from "../assets/Images/aboutus3.webp"
-import Quote from '../components/core/AboutPage/Quote'
-import StatsComponent from '../components/core/AboutPage/StatsComponent'
-import HighlightText from '../components/core/HomePage/HighlightText'
-import LearningGrid from '../components/core/AboutPage/LearningGrid'
-import ContactFormSection from '../components/core/AboutPage/ContactFormSection'
-import Footer from "../components/common/Footer"
-import ReviewSlider from "../components/common/ReviewSlider"
+import Quote from '../features/about/components/Quote'
+import StatsComponent from '../features/about/components/StatsComponent'
+import HighlightText from '../features/home/components/HighlightText'
+import LearningGrid from '../features/about/components/LearningGrid'
+import ContactFormSection from '../features/about/components/ContactFormSection'
+import Footer from "../shared/components/Footer"
+import ReviewSlider from "../shared/components/ReviewSlider"
 
 const About = () => {
   return (

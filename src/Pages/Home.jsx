@@ -1,16 +1,16 @@
 import React from 'react'
 import { IoMdArrowRoundForward } from "react-icons/io";
 import { Link } from 'react-router-dom';
-import HighlightText from '../components/core/HomePage/HighlightText';
-import CTAButton from '../components/core/HomePage/Button';
+import HighlightText from '../features/home/components/HighlightText';
+import CTAButton from '../features/home/components/Button';
 import Banner from '../assets/Images/banner.mp4'
-import CodeBlocks from '../components/core/HomePage/CodeBlocks';
-import TimelineSection from '../components/core/HomePage/TimelineSection';
-import LearningLanguageSection from '../components/core/HomePage/LearningLanguageSection';
-import InstructorSection from '../components/core/HomePage/InstructorSection';
-import ExploreMore from "../components/core/HomePage/ExploreMore";
-import ReviewSlider from "../components/common/ReviewSlider"
-import Footer from '../components/common/Footer';
+import CodeBlocks from '../features/home/components/CodeBlocks';
+import TimelineSection from '../features/home/components/TimelineSection';
+import LearningLanguageSection from '../features/home/components/LearningLanguageSection';
+import InstructorSection from '../features/home/components/InstructorSection';
+import ExploreMore from "../features/home/components/ExploreMore";
+import ReviewSlider from "../shared/components/ReviewSlider"
+import Footer from '../shared/components/Footer';
 
 const Home = () => {
   return (

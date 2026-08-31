@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import Footer from "../components/common/Footer"
+import Footer from "../shared/components/Footer"
 import { useSelector } from "react-redux"
 import { useParams } from 'react-router-dom'
-import { apiConnector } from '../services/apiconnector';
-import { categories } from '../services/apis';
-import {getCatalogPageData} from "../services/operations/PageAndComponentData"
-import CourseSlider from '../components/core/Catalog/CourseSlider';
-import Course_Card from '../components/core/Catalog/Course_Card';
+import { apiConnector } from '../shared/api/client';
+import { categories } from '../shared/api/endpoints';
+import {getCatalogPageData} from "../features/catalog/api/catalog.api"
+import CourseSlider from '../features/catalog/components/CourseSlider';
+import Course_Card from '../features/catalog/components/Course_Card';
 import Error from "./Error"
 
 const Catalog = () => { 
 
-  const { loading } = useSelector((state) => state.profile)
+  const { loading } = useSelector((state) => state.auth)
   const {catalogName} = useParams();
   const [active, setActive] = useState(1)
   const [catalogPageData , setCatalogPageData] = useState(null);

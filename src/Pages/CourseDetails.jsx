@@ -4,22 +4,20 @@ import { MdLanguage } from "react-icons/md";
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useParams } from 'react-router-dom';
 
-import ConfirmationModal from "../components/common/ConfirmationModal"
-import Footer from '../components/common/Footer';
-import RatingStars from "../components/common/RatingStars"
-import CourseAccordionBar from '../components/core/Course/CourseAccordionBar';
-import CourseDetailCard from "../components/core/Course/CourseDetailsCard"
-import {formatDate} from "../services/formatDate"
-import {fetchCourseDetails} from "../services/operations/courseDetailsAPI";
-import {BuyCourse} from "../services/operations/StudentFeatureAPI"
+import ConfirmationModal from "../shared/components/ConfirmationModal"
+import Footer from '../shared/components/Footer';
+import RatingStars from "../shared/components/RatingStars"
+import CourseAccordionBar from '../features/courses/components/CourseAccordionBar';
+import CourseDetailCard from "../features/courses/components/CourseDetailsCard"
+import {formatDate} from "../shared/lib/formatDate"
+import {fetchCourseDetails} from "../features/courses/api/courses.api";
+import {BuyCourse} from "../features/payments/api/payments.api"
 import GetAvgRating from "../utils/avgRating"
 import Error from "./Error"
 
 const CourseDetails = () => {
 
-  const {user} = useSelector((state) => state.profile);
-  const {token} = useSelector((state) => state.auth);
-  const {loading} = useSelector( (state) => state.profile)
+  const { user, token, loading } = useSelector((state) => state.auth);
   const {paymentLoading} = useSelector((state)=> state.course);
   const dispatch = useDispatch();
   const navigate = useNavigate();

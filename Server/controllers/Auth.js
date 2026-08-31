@@ -8,6 +8,42 @@ const { passwordUpdated } = require('../mail/template/passwordUpdate');
 const Profile = require('../models/Profile');
 require('dotenv').config();
 
+function normalizeEmail(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function escapeRegex(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function toBoolean(value, defaultValue = false) {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true") return true;
+    if (normalized === "false") return false;
+  }
+  return defaultValue;
+}
+
+async function findUserByEmailInsensitive(email, populateFields = null) {
+  const normalized = normalizeEmail(email);
+  if (!normalized) return null;
+
+  let query = User.findOne({ email: normalized });
+  if (populateFields) query = query.populate(populateFields);
+
+  let user = await query;
+  if (user) return user;
+
+  query = User.findOne({
+    email: { $regex: `^${escapeRegex(normalized)}$`, $options: "i" },
+  });
+  if (populateFields) query = query.populate(populateFields);
+
+  return query;
+}
+
 // signUp handler
 exports.signup = async (req, res) => {
   try {
@@ -15,7 +51,7 @@ exports.signup = async (req, res) => {
     const {
       firstName,
       lastName,
-      email,
+      email: rawEmail,
       password,
       confirmPassword,
       accountType,
@@ -27,7 +63,7 @@ exports.signup = async (req, res) => {
     if (
       !firstName ||
       !lastName ||
-      !email ||
+      !rawEmail ||
       !password ||
       !confirmPassword ||
       !otp
@@ -47,8 +83,10 @@ exports.signup = async (req, res) => {
     }
 
 
+    const email = normalizeEmail(rawEmail);
+
     // check user already exist or not
-    const existinUser = await User.findOne({ email });
+    const existinUser = await findUserByEmailInsensitive(email);
     if (existinUser) {
       return res.status(400).json({
         success: false,
@@ -57,7 +95,13 @@ exports.signup = async (req, res) => {
     }
 
     // find most recent otp for user
-    const recentOtpDoc = await OTP.findOne({ email, used: false }).sort({ createdAt: -1 });
+    let recentOtpDoc = await OTP.findOne({ email, used: false }).sort({ createdAt: -1 });
+    if (!recentOtpDoc) {
+      recentOtpDoc = await OTP.findOne({
+        email: { $regex: `^${escapeRegex(email)}$`, $options: "i" },
+        used: false,
+      }).sort({ createdAt: -1 });
+    }
 
     // validate otp
     if (!recentOtpDoc) {
@@ -131,18 +175,20 @@ exports.signup = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     // fetch data from req ki body
-    const { email, password } = req.body;
+    const { email: rawEmail, password } = req.body;
 
     // validation of data
-    if (!email || !password) {
+    if (!rawEmail || !password) {
       return res.status(400).json({
         success: false,
         message: "Please enter all the fields",
       })
     }
 
+    const email = normalizeEmail(rawEmail);
+
     // check user exist or not
-    const user = await User.findOne({ email }).populate("additionalDetails");
+    const user = await findUserByEmailInsensitive(email, "additionalDetails");
     if (!user) {
       return res.status(401).json({
         success: false,
@@ -170,8 +216,10 @@ exports.login = async (req, res) => {
     safeUser.password = undefined;
 
     const cookieOptions = {
-      expiresIn: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
       httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     }
 
     res.cookie("token", token, cookieOptions).status(200).json({
@@ -192,13 +240,26 @@ exports.login = async (req, res) => {
 // Send OTP For Email Verification
 exports.sendotp = async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normalizeEmail(req.body?.email);
+    const checkUserPresent = toBoolean(req.body?.checkUserPresent, true);
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
 
-    const checkUserPresent = await User.findOne({ email });
-    if (checkUserPresent) {
+    const existingUser = await findUserByEmailInsensitive(email);
+    if (checkUserPresent && existingUser) {
       return res.status(401).json({
         success: false,
         message: "User is Already Registered",
+      });
+    }
+    if (!checkUserPresent && !existingUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User is not registered",
       });
     }
 
@@ -228,13 +289,15 @@ exports.sendotp = async (req, res) => {
 
     console.log("OTP created:", otpBody);
 
-    // email handled by OTP model pre-save hook
+    // email handled by OTP model post-save hook
+    const includeDebugOtp =
+      process.env.NODE_ENV !== "production" ||
+      process.env.OTP_DEBUG_RESPONSE === "true";
 
     return res.status(200).json({
       success: true,
       message: "OTP sent successfully",
-      // don’t send otp back in prod; keep it only in email
-      // otp,
+      ...(includeDebugOtp ? { debugOtp: otp } : {}),
     });
   } catch (error) {
     console.log(error.message);
@@ -318,4 +381,5 @@ exports.changedPassword = async (req, res) => {
     });
   }
 };
+
 

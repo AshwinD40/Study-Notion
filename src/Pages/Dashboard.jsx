@@ -1,13 +1,12 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Outlet } from "react-router-dom";
-import Sidebar from "../components/core/Dashboard/Sidebar";
+import Sidebar from "../features/dashboard/components/Sidebar";
 
 function Dashboard() {
-  const { loading: authLoading } = useSelector((state) => state.auth);
-  const { loading: profileLoading } = useSelector((state) => state.profile);
+  const { loading } = useSelector((state) => state.auth);
 
-  if (authLoading || profileLoading) {
+  if (loading) {
     return (
       <div className="w-full min-h-screen flex items-center justify-center bg-richblack-900">
         <div className="spinner" />
