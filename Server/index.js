@@ -18,15 +18,25 @@ const fileUpload = require("express-fileupload");
 
 const PORT = process.env.PORT || 3000
 
-// connect with database
-database.connect();
-
 // middleware
 app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: "*",
+        origin: function (origin, callback) {
+            // Allow requests with no origin (mobile apps, Postman, server-to-server)
+            if (!origin) return callback(null, true);
+            const allowedOrigins = [
+                "http://localhost:3000",
+                "http://localhost:3001",
+                process.env.FRONTEND_URL,
+                process.env.CLIENT_URL,
+            ].filter(Boolean);
+            if (allowedOrigins.includes(origin) || process.env.NODE_ENV !== "production") {
+                return callback(null, true);
+            }
+            return callback(new Error("Not allowed by CORS"));
+        },
         credentials: true,
     })
 )
@@ -56,7 +66,15 @@ app.get("/", (req, res) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log("--- SERVER RESTARTED AT " + new Date().toISOString() + " [FORCE RESTART] ---");
-})
+async function startServer() {
+    await database.connect();
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log("--- SERVER RESTARTED AT " + new Date().toISOString() + " [FORCE RESTART] ---");
+    });
+}
+
+startServer().catch((error) => {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+});

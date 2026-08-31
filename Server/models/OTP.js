@@ -11,6 +11,14 @@ const OTPSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	used: {
+		type: Boolean,
+		default: false,
+	},
+	expiresAt: {
+		type: Date,
+		default: () => new Date(Date.now() + 5 * 60 * 1000),
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now,
@@ -36,25 +44,22 @@ async function sendVerificationEmail(email, otp) {
 		if (!mailResponse.success) {
 			throw new Error(mailResponse.error ? mailResponse.error.message : "Email sending failed");
 		}
-		console.log("Email sent successfully: ", mailResponse.response);
+		console.log("Email sent successfully:", mailResponse.info?.messageId || "ok");
 	} catch (error) {
 		console.log("Error occurred while sending email: ", error);
 		throw error;
 	}
 }
 
-// Define a post-save hook to send email after the document has been saved
-OTPSchema.pre("save", async function (next) {
-	if (this.isNew) {
-		try {
-			await sendVerificationEmail(this.email, this.otp);
-			next();
-		} catch (err) {
-			next(err); // this will stop the save and forward the error
-		}
-	} else {
-		next();
+// Send verification mail after save so OTP creation never blocks on SMTP latency.
+OTPSchema.post("save", function (doc) {
+	if (!doc?.email || !doc?.otp) {
+		return;
 	}
+
+	void sendVerificationEmail(doc.email, doc.otp).catch((err) => {
+		console.error("OTP email dispatch failed:", err?.message || err);
+	});
 });
 
 

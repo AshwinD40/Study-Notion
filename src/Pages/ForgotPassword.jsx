@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom';
-import { getPasswordResetToken } from '../services/operations/authAPI';
+import { getPasswordResetToken } from '../features/auth/api/auth.api';
 import { FaArrowLeftLong } from "react-icons/fa6";
 
 const ForgotPassword = () => {

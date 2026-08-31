@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useParams } from "react-router-dom";
-import { getFullDetailsOfCourse } from "../services/operations/courseDetailsAPI";
+import { getFullDetailsOfCourse } from "../features/courses/api/courses.api";
 import {
   setCompletedLectures,
   setCourseSectionData,
   setEntireCourseData,
   setTotalNoOfLectures,
-} from "../slices/viewCourseSlice";
-import VideoDetailsSidebar from "../components/core/viewCourse/VideoDetailsSidebar";
-import CourseReviewModal from "../components/core/viewCourse/CourseReviewModal";
+} from "../features/learning/store/learning.slice";
+import VideoDetailsSidebar from "../features/learning/components/VideoDetailsSidebar";
+import CourseReviewModal from "../features/learning/components/CourseReviewModal";
 
 const ViewCourse = () => {
   const [reviewModal, setReviewModal] = useState(false);

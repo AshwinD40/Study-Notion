@@ -2,36 +2,37 @@ import "./App.css";
 import {Route, Routes , useNavigate } from "react-router-dom";
 import { useDispatch , useSelector } from "react-redux";
 
-import Navbar from "./components/common/Navbar";
-import OpenRoute from "./components/core/Auth/OpenRoute";
-import PrivateRoute from "./components/core/Auth/PrivateRoute";
-import AddCourse from "./components/core/Dashboard/AddCourse";
-import Cart from "./components/core/Dashboard/Cart";
-import EditCourse from "./components/core/Dashboard/EditCourse/Index";
-import EnrolledCourses from "./components/core/Dashboard/EnrolledCourses";
-import Instructor from "./components/core/Dashboard/InstructorDashboard/Instructor";
-import MyCourses from "./components/core/Dashboard/MyCourses";
-import MyProfile from "./components/core/Dashboard/MyProfile";
-import Settings from "./components/core/Dashboard/Settings";
-import VideoDetails from "./components/core/viewCourse/VideoDetails";
-import About from "./Pages/About";
-import Catalog from "./Pages/Catalog";
-import Contact from "./Pages/ContactUs";
-import CourseDetails from "./Pages/CourseDetails";
-import Dashboard from "./Pages/Dashboard";
-import Error from "./Pages/Error";
-import ForgotPassword from "./Pages/ForgotPassword";
+import Navbar from "./shared/components/Navbar";
+import OpenRoute from "./features/auth/components/OpenRoute";
+import PrivateRoute from "./features/auth/components/PrivateRoute";
+import AddCourse from "./features/dashboard/components/AddCourse";
+import Cart from "./features/dashboard/components/Cart";
+import EditCourse from "./features/dashboard/components/EditCourse/Index";
+import EnrolledCourses from "./features/dashboard/components/EnrolledCourses";
+import Instructor from "./features/dashboard/components/InstructorDashboard/Instructor";
+import MyCourses from "./features/dashboard/components/MyCourses";
+import MyProfile from "./features/dashboard/components/MyProfile";
+import Settings from "./features/dashboard/components/Settings";
+import VideoDetails from "./features/learning/components/VideoDetails";
+import About from "./pages/About";
+import Catalog from "./pages/Catalog";
+import Contact from "./pages/ContactUs";
+import CourseDetails from "./pages/CourseDetails";
+import Dashboard from "./pages/Dashboard";
+import Error from "./pages/Error";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Pages
-import Home from "./Pages/Home";
-import Login from "./Pages/Login";
-import Signup from "./Pages/Signup";
-import UpdatePassword from "./Pages/UpdatePassword";
-import VerifyEmail from "./Pages/VerifyEmail";
-import ViewCourse from "./Pages/ViewCourse";
+import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import UpdatePassword from "./pages/UpdatePassword";
+import VerifyEmail from "./pages/VerifyEmail";
+import ViewCourse from "./pages/ViewCourse";
 
-import { getUserDetails } from "./services/operations/profileAPI";
+import { getUserDetails } from "./features/profile/api/profile.api";
 import { ACCOUNT_TYPE } from "./utils/constants";
+import { getStoredToken } from "./utils/storage";
 import { useEffect } from "react";
 
 function App() {
@@ -39,14 +40,14 @@ function App() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { user } = useSelector((state) => state.profile)
+  const { user } = useSelector((state) => state.auth)
 
   useEffect(() => {
-    if(localStorage.getItem("token")){
-      const token = JSON.parse(localStorage.getItem("token"))
+    const token = getStoredToken()
+    if(token){
       dispatch(getUserDetails(token, navigate))
     }
-  }, [])
+  }, [dispatch, navigate])
 
   return (
    <div className="w-screen min-h-screen bg-richblack-900 flex flex-col font-inter">
@@ -66,8 +67,7 @@ function App() {
           </OpenRoute>
         }
       />
-      <Route
-        path="login"
+      <Route path="login" 
         element={
           <OpenRoute>
             <Login />
@@ -75,24 +75,21 @@ function App() {
         }
       />
 
-      <Route
-        path="forgot-password"
+      <Route path="forgot-password"
         element={
           <OpenRoute>
             <ForgotPassword/>
           </OpenRoute>
         }
       />
-      <Route
-        path="update-password/:id"
+      <Route path="update-password/:id"
         element={
           <OpenRoute>
             <UpdatePassword/>
           </OpenRoute>
         }
       />
-      <Route
-        path="verify-email"
+      <Route path="verify-email"
         element={
           <OpenRoute>
             <VerifyEmail/>
@@ -109,7 +106,6 @@ function App() {
       >
       <Route path="dashboard/my-profile"  element={ <MyProfile /> }/>
         <Route path="dashboard/Settings" element={<Settings />} />
-
         {
           user?.accountType === ACCOUNT_TYPE.STUDENT && (
             <>
