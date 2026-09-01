@@ -59,43 +59,18 @@ const CourseDetails = () => {
 
   // Total No of Lectures
   const [totalNoOfLectures, setTotalNoOfLectures] = useState(0);
-  useEffect(()=> {
+  useEffect(() => {
     let lectures = 0;
     response?.data?.courseDetails?.courseContent?.forEach((sec) => {
-      lectures += sec.subSection?.length || 0
-    })
+      lectures += sec.subSection?.length || 0;
+    });
     setTotalNoOfLectures(lectures);
-  },[response]);
-
-  if(loading || !response) {
-    return (
-      <div className=' grid min-h-[clac(100vh-3.5rem)] place-items-center'>
-          <div className=' spinner'></div>
-      </div>
-    )
-  }
-  if(!response.success) {
-    return <Error />
-  }
-
-  const {
-    _id: course_id,
-    courseName,
-    courseDescription,
-    thumbnail,
-    price,
-    whatYouWillLearn,
-    courseContent,
-    ratingAndReview,
-    instructor,
-    studentsEnrolled,
-    createdAt,
-  } = response.data?.courseDetails;
+  }, [response]);
 
   const handleBuyCourse = () => {
     if (token) {
-      BuyCourse(token, [courseId], user, navigate, dispatch)
-      return
+      BuyCourse(token, [courseId], user, navigate, dispatch);
+      return;
     }
     setConfirmationModal({
       text1: "You are not logged in!",
@@ -104,10 +79,10 @@ const CourseDetails = () => {
       btn2Text: "Cancel",
       btn1Handler: () => navigate("/login"),
       btn2Handler: () => setConfirmationModal(null),
-    })
-  }
+    });
+  };
 
-  if (paymentLoading) {
+  if (paymentLoading || loading || !response) {
     // console.log("payment loading")
     return (
       <div className="grid min-h-[calc(100vh-3.5rem)] place-items-center">
@@ -115,6 +90,23 @@ const CourseDetails = () => {
       </div>
     )
   }
+
+  if (!response?.success) {
+    return <Error />
+  }
+
+  const {
+    courseName,
+    courseDescription,
+    thumbnail,
+    price,
+    whatYouWillLearn,
+    courseContent = [],
+    ratingAndReview = [],
+    instructor = {},
+    studentsEnrolled = [],
+    createdAt,
+  } = response?.data?.courseDetails || {};
 
    return (
     <>
@@ -195,8 +187,6 @@ const CourseDetails = () => {
           </div>   
         </div>
       </div>
-           
-
 
       <div className="mx-auto box-content px-4 text-start text-richblack-5 bg-richblack-900 lg:w-[1260px]">
           <div className="mx-auto max-w-maxContentTab lg:mx-0 xl:max-w-[810px]">

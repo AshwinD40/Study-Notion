@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { useSelector } from "react-redux"
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css"
 
 import { FaEdit, FaCheck } from "react-icons/fa"
@@ -58,15 +58,12 @@ const getCourseDuration = (course) => {
 // -------------------------------------------------
 
 const CourseTable = ({ courses, setCourses }) => {
-  const dispatch = useDispatch()
   const navigate = useNavigate()
   const { token } = useSelector((state) => state.auth)
-  const [loading, setLoading] = useState(false)
   const [confirmationModal, setConfirmationModal] = useState(null)
 
   const handleCourseDelete = async (courseId) => {
     try {
-      setLoading(true)
       await deleteCourse({ courseId }, token)
       const result = await fetchInstructorCourses(token)
       if (result) {
@@ -76,7 +73,6 @@ const CourseTable = ({ courses, setCourses }) => {
       console.error("DELETE COURSE ERROR:", err)
     } finally {
       setConfirmationModal(null)
-      setLoading(false)
     }
   }
 

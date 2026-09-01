@@ -78,23 +78,22 @@ exports.isInstructor = async (req, res, next) => {
 	}
 };
 
-// Admin
-exports.isAdmin = async (req, res , next)=>{
-    try{
+// Admin — verify against DB, not JWT claims alone
+exports.isAdmin = async (req, res, next) => {
+	try {
+		const userDetails = await User.findOne({ email: req.user.email });
 
-        if(req.user.accountType !== "Admin"){
-            return res.status(401).json({
-                success:false,
-                message: 'You are not a Admin',
-            });
-        }
-        next();
-
-    }catch(error){
-        res.status(500).json({
-            success:false,
-            message:"User role can not verified , please try again later",
-        })
-
-   }
-}
+		if (!userDetails || userDetails.accountType !== "Admin") {
+			return res.status(401).json({
+				success: false,
+				message: "This is a Protected Route for Admin",
+			});
+		}
+		next();
+	} catch (error) {
+		res.status(500).json({
+			success: false,
+			message: "User Role Can't be Verified",
+		});
+	}
+};

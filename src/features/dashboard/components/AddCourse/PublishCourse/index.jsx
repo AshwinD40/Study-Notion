@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux'
-import { FaChevronLeft } from "react-icons/fa";
 import IconBtn from "../../../../../shared/components/IconBtn"
 import {setStep, resetCourseState} from "../../../../courses/store/course.slice"
 import {editCourseDetails} from "../../../../courses/api/courses.api";
@@ -22,6 +21,7 @@ const PublishCourse = () => {
     if (course?.status === COURSE_STATUS.PUBLISHED){
       setValue("public", true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const goBack = () => {

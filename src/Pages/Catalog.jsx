@@ -4,18 +4,18 @@ import { useSelector } from "react-redux"
 import { useParams } from 'react-router-dom'
 import { apiConnector } from '../shared/api/client';
 import { categories } from '../shared/api/endpoints';
-import {getCatalogPageData} from "../features/catalog/api/catalog.api"
+import { getCatalogPageData } from "../features/catalog/api/catalog.api"
 import CourseSlider from '../features/catalog/components/CourseSlider';
-import Course_Card from '../features/catalog/components/Course_Card';
+import CourseCard from '../features/catalog/components/Course_Card';
 import Error from "./Error"
 
 const Catalog = () => { 
 
   const { loading } = useSelector((state) => state.auth)
-  const {catalogName} = useParams();
+  const { catalogName } = useParams();
   const [active, setActive] = useState(1)
-  const [catalogPageData , setCatalogPageData] = useState(null);
-  const [categoryId , setCategoryId] = useState("");
+  const [catalogPageData, setCatalogPageData] = useState(null);
+  const [categoryId, setCategoryId] = useState("");
 
   // fetch all categories
   useEffect(() => {
@@ -24,15 +24,15 @@ const Catalog = () => {
         const res = await apiConnector("GET", categories.CATEGORIES_API)
         const category_id = res?.data?.data?.filter(
           (ct) => ct.name.split(" ").join("-").toLowerCase() === catalogName
-        )[0]._id
-        setCategoryId(category_id)
+        )[0]?._id
+        if (category_id) setCategoryId(category_id)
       } catch (error) {
         console.log("Could not fetch Categories.", error)
       }
     })()
   }, [catalogName])
 
-  useEffect( () => {
+  useEffect(() => {
     const getCategoryDetails = async() => {
       try{
         const res = await getCatalogPageData(categoryId);
@@ -41,13 +41,11 @@ const Catalog = () => {
       catch(error){
         console.log(error)
       }
-
     }
-    if(categoryId){
+    if (categoryId){
       getCategoryDetails();
     }
-      
-  },[categoryId])
+  }, [categoryId])
 
   if (loading || !catalogPageData) {
     return (
@@ -123,16 +121,15 @@ const Catalog = () => {
         </div>
       </div>
 
-
       {/*section 03*/}
       <div className=" mx-auto box-content w-full max-w-maxContentTab px-4 py-12 lg:max-w-maxContent">
         <div className='section_heading'>Frequently Bougth Together</div>
         <div className="py-8">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {
-              catalogPageData?.data?.mostSellingCourses?.slice(0,4).map((course, index) => {
-                <Course_Card course={course} key={index} Heigth={"h-[400px]"}/>
-              })
+              catalogPageData?.data?.mostSellingCourses?.slice(0,4).map((course, index) => (
+                <CourseCard course={course} key={index} Height={"h-[400px]"}/>
+              ))
             }
           </div>
         </div>

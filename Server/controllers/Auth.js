@@ -82,6 +82,14 @@ exports.signup = async (req, res) => {
       })
     }
 
+    // Validate password strength
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters long",
+      })
+    }
+
 
     const email = normalizeEmail(rawEmail);
 
@@ -155,11 +163,14 @@ exports.signup = async (req, res) => {
       image: `https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`,
     })
 
-    // return res
+    // return res — remove password hash before sending
+    const safeUser = user.toObject();
+    safeUser.password = undefined;
+
     return res.status(200).json({
       success: true,
       message: "User created successfully",
-      user,
+      user: safeUser,
     })
   }
   catch (error) {
@@ -287,8 +298,6 @@ exports.sendotp = async (req, res) => {
       // if your schema has timestamps, fine; else add expiresAt here if needed
     });
 
-    console.log("OTP created:", otpBody);
-
     // email handled by OTP model post-save hook
     const includeDebugOtp =
       process.env.NODE_ENV !== "production" ||
@@ -304,7 +313,6 @@ exports.sendotp = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Could not send OTP",
-      error: error.message,
     });
   }
 };
@@ -321,6 +329,14 @@ exports.changedPassword = async (req, res) => {
     }
 
     const { oldPassword, newPassword } = req.body;
+
+    // Validate new password strength
+    if (!newPassword || newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "New password must be at least 8 characters long",
+      });
+    }
 
     const isPasswordMatch = await bcrypt.compare(
       oldPassword,
@@ -360,8 +376,6 @@ exports.changedPassword = async (req, res) => {
       if (!emailResponse.success) {
         console.error("Password update email failed:", emailResponse.error);
         // but don't throw; password is already changed
-      } else {
-        console.log("Password updated email sent:", emailResponse.info.messageId);
       }
     } catch (err) {
       console.error("Error while sending password update email:", err);
@@ -377,7 +391,6 @@ exports.changedPassword = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Something went wrong while updating password",
-      error: error.message,
     });
   }
 };

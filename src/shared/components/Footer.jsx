@@ -25,7 +25,7 @@ const Footer = () => {
 
   return (
     <footer
-      className="w-full bg-richblack-900/60 border-t border-white/3 py-12"
+      className="w-full bg-richblack-900/60 border-t border-neutral-50/10 py-12"
       role="contentinfo"
     >
       <div className="mx-auto w-11/12 max-w-maxContent">

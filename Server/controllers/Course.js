@@ -145,13 +145,24 @@ exports.editCourse = async (req, res) => {
       course.thumbnail = thumbnailImage.secure_url
     }
 
-    // Update only the fields that are present in the request body
-    for (const key in updates) {
-      if (updates.hasOwnProperty(key)) {
+    // Only allow updating specific fields (prevent mass assignment)
+    const ALLOWED_FIELDS = [
+      "courseName",
+      "courseDescription",
+      "whatYouWillLearn",
+      "price",
+      "tag",
+      "category",
+      "status",
+      "instructions",
+    ];
+
+    for (const key of ALLOWED_FIELDS) {
+      if (updates[key] !== undefined) {
         if (key === "tag" || key === "instructions") {
-          course[key] = JSON.parse(updates[key])
+          course[key] = JSON.parse(updates[key]);
         } else {
-          course[key] = updates[key]
+          course[key] = updates[key];
         }
       }
     }
@@ -322,13 +333,6 @@ exports.getFullCourseDetails = async (req, res) => {
       })
     }
 
-    // if (courseDetails.status === "Draft") {
-    //   return res.status(403).json({
-    //     success: false,
-    //     message: `Accessing a draft course is forbidden`,
-    //   });
-    // }
-
     let totalDurationInSeconds = 0
     courseDetails.courseContent.forEach((content) => {
       content.subSection.forEach((subSection) => {
@@ -445,6 +449,14 @@ exports.deleteCourse = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Course not found"
+      })
+    }
+
+    // Ownership check: only the course instructor can delete it
+    if (course.instructor.toString() !== req.user.id) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not authorized to delete this course",
       })
     }
 

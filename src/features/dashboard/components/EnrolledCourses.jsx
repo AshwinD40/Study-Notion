@@ -22,7 +22,7 @@ export default function EnrolledCourses() {
         console.log("Could not fetch enrolled courses.")
       }
     })()
-  }, []);
+  }, [token]);
 
 
   return (

@@ -25,7 +25,6 @@ function Navbar() {
   const [loading, setLoading] = useState(false);
 
   const [catalogOpen, setCatalogOpen] = useState(false);
-  const [selectedCat, setSelectedCat] = useState(null);
 
   // popup state + confirm modal
   const [menuOpen, setMenuOpen] = useState(false);
@@ -179,12 +178,12 @@ function Navbar() {
             {token == null ? (
               <>
                 <Link to="/login">
-                  <button className="rounded-[8px] border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100">
+                  <button className="rounded-xl border border-neutral-100/20 bg-transparent px-4 py-1.5 text-white">
                     Log in
                   </button>
                 </Link>
                 <Link to="/signup">
-                  <button className="rounded-[8px] border border-richblack-700 bg-richblack-800 px-[12px] py-[8px] text-richblack-100">
+                  <button className="rounded-xl border border-neutral-100/20 bg-transparent px-4 py-1.5 text-white">
                     Sign up
                   </button>
                 </Link>
@@ -313,7 +312,6 @@ function Navbar() {
                                 onClick={() => {
                                   setMenuOpen(false);
                                   setCatalogOpen(false);
-                                  setSelectedCat(c.name);
                                 }}
                                 className="block w-full max-w-[320px] text-center rounded-lg px-4 py-3 text-sm text-richblack-25 hover:bg-richblack-700 transition"
                                 ref={i === 0 ? firstFocusableRef : null}

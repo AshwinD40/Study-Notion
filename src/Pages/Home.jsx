@@ -17,11 +17,11 @@ const Home = () => {
     <div>
       {/*section 01*/}
       <div className=' relative mx-auto mt-5 flex flex-col w-11/12 max-w-maxContent items-center text-white justify-between gap-8'>
-
+      
         {/* Become a Instructor Button */}
         <Link to={"/signUp"}>
-          <div className=' group  mt-16 p-1 mx-auto  justify-center rounded-full bg-[#161D29] font-semibold text-richblack-100 transition-all duration-200 hover:scale-95 shadow-md w-fit hover:drop-shadow-none drop-shadow-[0_1.5px_rgba(255,255,255,0.25)]'>
-            <div className='group-hover:bg-richblack-900 flex flex-row rounded-full transition-all justify-center items-center gap-2 px-7 py-[6px]'>
+          <div className=' group  mt-16 p-1 mx-auto  justify-center rounded-full bg-slate-800 font-semibold text-white transition-all duration-200 hover:scale-95 shadow-md w-fit hover:drop-shadow-none drop-shadow-[0_1.5px_rgba(255,255,255,0.25)]'>
+            <div className='group-hover:bg-slate-950 flex flex-row rounded-full transition-all justify-center items-center gap-2 px-7 py-[6px]'>
               <p>Become an Instructor</p>
               <IoMdArrowRoundForward/>
             </div>
@@ -51,18 +51,16 @@ const Home = () => {
         </div>
 
         {/*Video */}
-        <div className=' rounded-lg mx-3 my-7 shadow-[10px_-5px_50px_-5px] shadow-blue-200'>
+        <div className=' rounded-lg px-7 py-7 shadow-sm shadow-blue-100/30 '>
           <video 
             muted
             loop
             autoPlay
-            className=' rounded-lg lg:shadow-[20px_20px_rgba(255,255,255)] md:shadow-[20px_20px_rgba(255,255,255)]'
+            className=' rounded-lg '
           >
             <source src={Banner} type='video/mp4'/>
           </video>
         </div>
-          
-              
           
         {/* code section 01*/}
         <div>
@@ -136,7 +134,7 @@ const Home = () => {
       </div>
 
       {/*section 02*/}
-      <div className=' bg-pure-greys-5 text-richblack-700'>
+      <div className=' bg-gray-50 text-richblack-700'>
         <div className=' homepage_bg h-[333px]'>
           {/*Explore Full Category section */}       
           <div className=' w-11/12 max-w-maxContent flex flex-col items-center justify-between gap-8 mx-auto'>
@@ -181,7 +179,7 @@ const Home = () => {
       </div>
 
       {/*section 03*/}
-      <div className=' relative my-20 w-11/12 mx-auto max-w-maxContent fle flex-col justify-between gap-8 bg-richblack-900 text-white items-center'>
+      <div className=' relative my-20 w-11/12 mx-auto max-w-maxContent fle flex-col justify-between gap-8 bg-transparent text-white items-center'>
         {/*Become a Instructor section */}
         <InstructorSection/>
 
@@ -194,7 +192,7 @@ const Home = () => {
       </div>
 
       {/*footer */}
-      <div className=' bg-[#161D29] '>
+      <div >
         <Footer/>
       </div>
     </div>
