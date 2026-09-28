@@ -15,13 +15,13 @@ function Dashboard() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-richblack-900">
-      {/* navbar is sticky above this, height = 4rem (h-16) */}
+    <div className="relative min-h-[calc(100vh-3.5rem)] bg-richblack-900 flex">
+      {/* Sidebar for Desktop & Mobile */}
       <Sidebar />
 
-      {/* main content shifted right on md+ so it doesn't sit under the fixed sidebar */}
-      <main className="pt-16 md:ml-[240px]">
-        <div className="mx-auto w-11/12 max-w-[1300px] py-8 md:py-10">
+      {/* Main Content Area */}
+      <main className="flex-1 pt-28 pb-12 md:pt-16 md:ml-[240px] min-h-[calc(100vh-3.5rem)] overflow-x-hidden">
+        <div className="mx-auto w-11/12 max-w-[1100px] py-4 md:py-6">
           <Outlet />
         </div>
       </main>

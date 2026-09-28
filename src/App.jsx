@@ -1,5 +1,5 @@
 import "./App.css";
-import {Route, Routes , useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch , useSelector } from "react-redux";
 
 import Navbar from "./shared/components/Navbar";
@@ -56,8 +56,10 @@ function App() {
       <Route path="/" element={<Home/>} />
       <Route path="/about"  element={ <About/>} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="courses/:courseId" element={<CourseDetails/>} />
-      <Route path = "catalog/:catalogName" element={<Catalog/>} />
+      <Route path="catalog" element={<Catalog />} />
+      <Route path="catalog/:catalogName" element={<Catalog />} />
+      <Route path="courses" element={<Catalog />} />
+      <Route path="courses/:courseId" element={<CourseDetails />} />
       
       <Route
         path="signup"
@@ -98,33 +100,44 @@ function App() {
       />
         
       <Route
+        path="dashboard"
         element={
           <PrivateRoute>
             <Dashboard />
           </PrivateRoute>
         }
       >
-      <Route path="dashboard/my-profile"  element={ <MyProfile /> }/>
-        <Route path="dashboard/Settings" element={<Settings />} />
-        {
-          user?.accountType === ACCOUNT_TYPE.STUDENT && (
-            <>
-              <Route path="dashboard/cart" element={<Cart />} />
-              <Route path="dashboard/enrolled-courses" element={<EnrolledCourses/>}/>
-            </>
-          )
-        }
+        <Route
+          index
+          element={
+            <Navigate
+              to={
+                user?.accountType === ACCOUNT_TYPE.INSTRUCTOR
+                  ? "instructor"
+                  : "enrolled-courses"
+              }
+              replace
+            />
+          }
+        />
+        <Route path="my-profile" element={<MyProfile />} />
+        <Route path="settings" element={<Settings />} />
+        <Route path="Settings" element={<Settings />} />
+        {user?.accountType === ACCOUNT_TYPE.STUDENT && (
+          <>
+            <Route path="cart" element={<Cart />} />
+            <Route path="enrolled-courses" element={<EnrolledCourses />} />
+          </>
+        )}
 
-        {
-          user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
-            <>
-              <Route path="dashboard/my-courses" element={<MyCourses />} />
-              <Route path="dashboard/instructor" element={<Instructor />} />
-              <Route path="dashboard/add-course" element={<AddCourse/>}/>
-              <Route path="dashboard/edit-course/:courseId" element={<EditCourse/>}/> 
-            </>
-          )
-        }
+        {user?.accountType === ACCOUNT_TYPE.INSTRUCTOR && (
+          <>
+            <Route path="my-courses" element={<MyCourses />} />
+            <Route path="instructor" element={<Instructor />} />
+            <Route path="add-course" element={<AddCourse />} />
+            <Route path="edit-course/:courseId" element={<EditCourse />} />
+          </>
+        )}
       </Route>
       <Route element = {
         <PrivateRoute>

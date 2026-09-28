@@ -10,7 +10,8 @@ const {
 
 const {
   resetPassword,
-  resetPasswordToken
+  resetPasswordToken,
+  verifyResetToken,
 } = require('../controllers/ResetPassword')
 
 
@@ -54,6 +55,8 @@ router.post('/changePassword', auth, changedPassword);
 
 // router for generating a reset password token
 router.post('/reset-password-token', resetLimiter, resetPasswordToken);
+// router for verifying reset password token validity
+router.post('/verify-reset-token', resetLimiter, verifyResetToken);
 // router for resseting user password
 router.post('/reset-password', resetPassword);
 

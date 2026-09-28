@@ -1,7 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineMenu, AiOutlineShoppingCart, AiOutlineClose } from "react-icons/ai";
 import { BsChevronDown } from "react-icons/bs";
-import { VscAccount } from "react-icons/vsc";
+import {
+  VscHome,
+  VscBook,
+  VscInfo,
+  VscMail,
+  VscDashboard,
+  VscSignOut,
+  VscChevronRight,
+} from "react-icons/vsc";
 import { useSelector, useDispatch } from "react-redux";
 import { Link, matchPath, useLocation, useNavigate } from "react-router-dom";
 
@@ -13,6 +21,13 @@ import ProfileDropdown from "../../features/auth/components/ProfileDropDown";
 import { logout } from "../../features/auth/api/auth.api";
 import ConfirmationModal from "./ConfirmationModal";
 
+const navIcons = {
+  Home: <VscHome className="text-lg" />,
+  Catalog: <VscBook className="text-lg" />,
+  "About Us": <VscInfo className="text-lg" />,
+  "Contact Us": <VscMail className="text-lg" />,
+};
+
 function Navbar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -23,15 +38,11 @@ function Navbar() {
 
   const [subLinks, setSubLinks] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const [catalogOpen, setCatalogOpen] = useState(false);
-
-  // popup state + confirm modal
   const [menuOpen, setMenuOpen] = useState(false);
   const [confirmationModal, setConfirmationModal] = useState(null);
 
   const panelRef = useRef(null);
-  const firstFocusableRef = useRef(null); // focus after open
   const menuButtonRef = useRef(null);
 
   useEffect(() => {
@@ -53,15 +64,18 @@ function Navbar() {
 
   const matchRoute = (route) => !!matchPath({ path: route }, location.pathname);
 
-  // close on outside pointerdown or Escape
+  // Close menu on ESC key or clicking outside
   useEffect(() => {
     function onKey(e) {
       if (e.key === "Escape") setMenuOpen(false);
     }
     function onPointerDown(e) {
       if (!menuOpen) return;
-      // if click/pointer is outside panel and outside menu button, close
-      if (panelRef.current && !panelRef.current.contains(e.target) && !menuButtonRef.current?.contains(e.target)) {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(e.target) &&
+        !menuButtonRef.current?.contains(e.target)
+      ) {
         setMenuOpen(false);
       }
     }
@@ -74,15 +88,12 @@ function Navbar() {
     };
   }, [menuOpen]);
 
-  // manage body overflow & focus
+  // Prevent background scroll when mobile drawer is open
   useEffect(() => {
-    const prev = document.body.style.overflow;
+    const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    if (menuOpen) {
-      setTimeout(() => firstFocusableRef.current?.focus(), 70);
-    }
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevOverflow;
     };
   }, [menuOpen]);
 
@@ -101,60 +112,76 @@ function Navbar() {
     });
   };
 
-  const userDisplayName = () => user?.name || user?.fullName || user?.firstName || "";
-  const userInitials = () => {
-    const name = userDisplayName();
-    if (!name) return "U";
-    return name
-      .split(" ")
-      .map((p) => p?.[0] ?? "")
-      .filter(Boolean)
-      .slice(0, 2)
-      .join("")
-      .toUpperCase();
-  };
-
   return (
     <>
-      <div className="flex h-14 items-center justify-center transition-all duration-200 fixed top-0 left-0 w-full z-50 backdrop-blur-md border-b border-white/20">
+      {/* Top Navbar */}
+      <header className="fixed top-0 left-0 z-40 flex h-14 w-full items-center justify-center border-b border-white/10 bg-richblack-900/80 backdrop-blur-md transition-all duration-200">
         <div className="flex w-11/12 max-w-maxContent items-center justify-between">
-          {/* Logo */}
+          {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-3">
-            <img src={logo} alt="Logo" width={160} height={32} loading="lazy" />
+            <img src={logo} alt="StudyNotion Logo" width={150} height={32} loading="lazy" />
           </Link>
 
-          {/* Links */}
+          {/* Desktop Navigation */}
           <nav className="hidden md:block">
             <ul className="flex gap-x-6 text-richblack-25">
               {NavbarLinks.map((link, index) => (
                 <li key={index}>
-                  {link.title === "Catalog" ? (
+                  {link.title === "Courses" || link.title === "Catalog" ? (
                     <div
-                      className={`group relative flex cursor-pointer items-center gap-1 ${matchRoute("/catalog/:catalogName") ? "text-yellow-25" : "text-richblack-25"}`}
+                      className={`group relative flex cursor-pointer items-center gap-1.5 transition ${
+                        matchRoute("/courses") ||
+                        matchRoute("/courses/*") ||
+                        matchRoute("/catalog") ||
+                        matchRoute("/catalog/*")
+                          ? "text-yellow-50 font-semibold"
+                          : "text-richblack-25 hover:text-white"
+                      }`}
                     >
-                      <p>{link.title}</p>
-                      <BsChevronDown />
+                      <Link to="/courses" className="hover:text-yellow-50 transition">
+                        Courses
+                      </Link>
+                      <BsChevronDown className="text-xs transition-transform group-hover:rotate-180" />
                       <div
-                        className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[220px] translate-x-[-50%] translate-y-[3em] flex-col rounded-lg bg-richblack-5 p-4 text-richblack-900 opacity-0 transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[300px]"
+                        className="invisible absolute left-[50%] top-[50%] z-[1000] flex w-[250px] translate-x-[-50%] translate-y-[3em] flex-col rounded-xl border border-white/10 bg-richblack-800 p-2.5 text-richblack-50 opacity-0 shadow-xl transition-all duration-150 group-hover:visible group-hover:translate-y-[1.65em] group-hover:opacity-100 lg:w-[280px]"
                         aria-hidden
                       >
-                        <div className="absolute left-[50%] top-0 -z-10 h-6 w-6 translate-x-[80%] translate-y-[-40%] rotate-45 select-none rounded bg-richblack-5"></div>
+                        <div className="absolute left-[50%] top-0 -z-10 h-4 w-4 translate-x-[-50%] translate-y-[-50%] rotate-45 rounded bg-richblack-800 border-l border-t border-white/10" />
+                        <Link
+                          to="/courses"
+                          className="rounded-lg px-3 py-2 text-sm font-semibold text-yellow-50 hover:bg-white/10 transition flex items-center justify-between border-b border-white/5 mb-1"
+                        >
+                          <span>All Courses</span>
+                          <span className="text-[11px] text-richblack-400 font-normal">View all &rarr;</span>
+                        </Link>
                         {loading ? (
-                          <p className="text-center">Loading...</p>
+                          <p className="text-center text-xs text-richblack-300 py-2">Loading...</p>
                         ) : subLinks.length ? (
-                          subLinks.filter((s) => s?.courses?.length > 0).map((s, i) => (
-                            <Link key={s._id ?? i} to={`/catalog/${s.name.split(" ").join("-").toLowerCase()}`} className="rounded-lg bg-transparent py-2 pl-2 hover:bg-richblack-50 text-sm">
-                              {s.name}
-                            </Link>
-                          ))
+                          subLinks
+                            .filter((s) => s?.courses?.length > 0)
+                            .map((s, i) => (
+                              <Link
+                                key={s._id ?? i}
+                                to={`/courses?category=${s.name.split(" ").join("-").toLowerCase()}`}
+                                className="rounded-lg px-3 py-2 text-sm text-richblack-100 hover:bg-white/10 hover:text-yellow-50 transition"
+                              >
+                                {s.name}
+                              </Link>
+                            ))
                         ) : (
-                          <p className="text-center">No Courses Found</p>
+                          <p className="text-center text-xs text-richblack-300 py-2">No Courses Found</p>
                         )}
                       </div>
                     </div>
                   ) : (
                     <Link to={link.path}>
-                      <p className={`${matchRoute(link.path) ? "text-yellow-25" : "text-richblack-25"}`}>{link.title}</p>
+                      <p
+                        className={`transition ${
+                          matchRoute(link.path) ? "text-yellow-50 font-semibold" : "text-richblack-25 hover:text-white"
+                        }`}
+                      >
+                        {link.title}
+                      </p>
                     </Link>
                   )}
                 </li>
@@ -162,13 +189,13 @@ function Navbar() {
             </ul>
           </nav>
 
-          {/* Profile */}
+          {/* Desktop Auth / Profile Actions */}
           <div className="hidden md:flex items-center gap-x-4">
             {user && user?.accountType !== "Instructor" && (
-              <Link to="/dashboard/cart" className="relative">
-                <AiOutlineShoppingCart className="text-2xl text-richblack-100" />
+              <Link to="/dashboard/cart" className="relative p-1.5 text-richblack-100 hover:text-white transition">
+                <AiOutlineShoppingCart className="text-2xl" />
                 {totalItems > 0 && (
-                  <span className="absolute -bottom-2 -right-2 grid h-5 w-5 place-items-center rounded-full bg-yellow-300 text-xs font-bold text-richblack-900">
+                  <span className="absolute -top-1 -right-1 grid h-5 w-5 place-items-center rounded-full bg-yellow-50 text-xs font-bold text-richblack-900 shadow-sm">
                     {totalItems}
                   </span>
                 )}
@@ -176,30 +203,30 @@ function Navbar() {
             )}
 
             {token == null ? (
-              <>
+              <div className="flex items-center gap-x-3">
                 <Link to="/login">
-                  <button className="rounded-xl border border-neutral-100/20 bg-transparent px-4 py-1.5 text-white">
+                  <button className="rounded-xl border border-white/20 bg-transparent px-4 py-1.5 text-sm font-medium text-white hover:bg-white/10 transition">
                     Log in
                   </button>
                 </Link>
                 <Link to="/signup">
-                  <button className="rounded-xl border border-neutral-100/20 bg-transparent px-4 py-1.5 text-white">
+                  <button className="rounded-xl bg-yellow-50 px-4 py-1.5 text-sm font-semibold text-richblack-900 shadow-sm hover:bg-yellow-100 transition">
                     Sign up
                   </button>
                 </Link>
-              </>
+              </div>
             ) : (
               <ProfileDropdown />
             )}
           </div>
 
-          {/* Mobile Menu */}
-          <div className="md:hidden flex items-center gap-2">
+          {/* Mobile Right Bar (Cart + Hamburger) */}
+          <div className="flex md:hidden items-center gap-3">
             {user && user?.accountType !== "Instructor" && (
-              <Link to="/dashboard/cart" className="relative mr-2">
-                <AiOutlineShoppingCart className="text-xl text-richblack-100" />
+              <Link to="/dashboard/cart" className="relative p-1 text-richblack-100 hover:text-white transition" aria-label="Cart">
+                <AiOutlineShoppingCart className="text-2xl" />
                 {totalItems > 0 && (
-                  <span className="absolute -bottom-2 -right-2 grid h-4 w-4 place-items-center rounded-full bg-yellow-500 text-[10px] font-bold text-richblack-900">
+                  <span className="absolute -top-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-yellow-50 text-[10px] font-bold text-richblack-900">
                     {totalItems}
                   </span>
                 )}
@@ -208,194 +235,231 @@ function Navbar() {
 
             <button
               ref={menuButtonRef}
-              onPointerDown={(e) => {
-                // stop pointer from bubbling to document handler
-                e.stopPropagation();
-                setMenuOpen((prev) => !prev);
-              }}
-              aria-haspopup="dialog"
+              onClick={() => setMenuOpen((prev) => !prev)}
+              aria-label="Toggle navigation menu"
               aria-expanded={menuOpen}
-              aria-controls="site-menu-panel"
-              className={`flex items-center justify-center w-10 h-10 rounded-md transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-yellow-500 ${menuOpen ? "bg-richblack-800/60" : "hover:bg-richblack-800/50"}`}
-              title={menuOpen ? "Close menu" : "Open menu"}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-richblack-800/80 text-richblack-50 hover:bg-richblack-700 transition active:scale-95"
             >
-              <div className={`transition-transform duration-300 text-richblack-50 ${menuOpen ? "rotate-90 scale-110" : "rotate-0"}`}>
-                {menuOpen ? <AiOutlineClose className="text-2xl" /> : <AiOutlineMenu className="text-2xl" />}
-              </div>
+              {menuOpen ? <AiOutlineClose className="text-xl" /> : <AiOutlineMenu className="text-xl" />}
             </button>
           </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Menu Overlay */}
-      <div className={`fixed inset-0 z-40 bg-black/40 transition-opacity md:hidden ${menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}`} aria-hidden={!menuOpen} />
-
+      {/* Mobile Drawer Backdrop */}
       <div
+        className={`fixed inset-0 z-50 bg-black/75 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+          menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
+        aria-hidden={!menuOpen}
+      />
+
+      {/* Modern Slide-over Drawer */}
+      <aside
         id="site-menu-panel"
         ref={panelRef}
         role="dialog"
         aria-modal="true"
-        aria-labelledby="site-menu-title"
-        className={`fixed left-1/2 top-1/2 z-50 max-h-[90vh] w-[min(92vw,420px)] -translate-x-1/2 -translate-y-1/2 overflow-auto rounded-2xl p-5 transition-transform duration-180 md:hidden ${menuOpen ? "scale-100 opacity-100 pointer-events-auto" : "scale-95 opacity-0 pointer-events-none"}`}
-        // lighter glass styles:
-        style={{
-          background: "linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.02))",
-          border: "1px solid rgba(255,255,255,0.05)",
-          backdropFilter: "blur(10px) saturate(110%)",
-          WebkitBackdropFilter: "blur(10px) saturate(110%)",
-          boxShadow: "0 8px 30px rgba(2,6,23,0.45)",
-        }}
-        onPointerDown={(e) => {
-          // prevent outer pointerdown handler from closing when interacting inside
-          e.stopPropagation();
-        }}
+        aria-label="Navigation Menu"
+        className={`fixed inset-y-0 right-0 z-50 flex h-full w-full max-w-[320px] flex-col justify-between border-l border-white/10 bg-richblack-900/95 backdrop-blur-2xl shadow-2xl transition-transform duration-300 ease-out md:hidden ${
+          menuOpen ? "translate-x-0" : "translate-x-full"
+        }`}
+        onPointerDown={(e) => e.stopPropagation()}
       >
-        {/* header */}
-        <div className="relative mb-6 w-full flex justify-between items-center gap-3">
-          {/* Logo */}
-          <div className="flex items-center gap-2 max-w-[85%]">
-            <div
-              className="flex h-12 w-12 items-center justify-center rounded-full text-sm font-semibold"
-              style={{
-                background: "linear-gradient(135deg,#FDE68A,#FB7185)",
-                color: "#0b1220",
-              }}
-            >
-              {token ? userInitials() : "SN"}
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between border-b border-white/10 p-4 bg-richblack-800/40">
+          {token && user ? (
+            <div className="flex items-center gap-3 overflow-hidden">
+              <img
+                src={user?.image || `https://api.dicebear.com/5.x/initials/svg?seed=${user.firstName || "User"}`}
+                alt={user?.firstName || "Profile"}
+                className="h-10 w-10 rounded-full border border-yellow-50/40 object-cover flex-shrink-0"
+              />
+              <div className="flex flex-col overflow-hidden text-left">
+                <p className="truncate text-sm font-semibold text-richblack-25">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <span className="text-[11px] font-medium text-yellow-50">
+                  {user?.accountType || "Student"}
+                </span>
+              </div>
             </div>
+          ) : (
+            <Link to="/" onClick={() => setMenuOpen(false)}>
+              <img src={logo} alt="StudyNotion" className="h-7 w-auto object-contain" />
+            </Link>
+          )}
 
-            <h3 id="site-menu-title" className="text-lg font-semibold text-richblack-5 break-words">
-              {token ? userDisplayName() || "User" : "StudyNotion"}
-            </h3>
-          </div>
-
-          {/* Close button */}
-          <button onClick={() => setMenuOpen(false)} aria-label="Close menu" className="rounded-md px-3 py-1.5 text-richblack-100 bg-richblack-700 text-sm hover:bg-richblack-800/30 transition">
-            Close
+          <button
+            onClick={() => setMenuOpen(false)}
+            aria-label="Close menu"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-richblack-200 hover:bg-white/10 hover:text-white transition active:scale-95"
+          >
+            <AiOutlineClose className="text-lg" />
           </button>
         </div>
 
-        {/* Body */}
-        <div className="w-full flex flex-col items-center gap-6">
-          {/* Explore */}
-          <div className="w-full flex flex-col items-center">
-            <h4 className="mb-3 text-sm font-medium text-richblack-200">Explore</h4>
+        {/* Drawer Scrollable Navigation */}
+        <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          <div className="space-y-1.5">
+            <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-richblack-400">
+              Menu
+            </p>
 
-            <ul className="flex flex-col gap-3 items-center w-full">
-              {NavbarLinks.map((item, idx) => {
-                if (item.title === "Catalog") {
-                  return (
-                    <li key={idx} className="w-full flex flex-col items-center">
-                      <button
-                        type="button"
-                        onClick={() => setCatalogOpen((s) => !s)}
-                        aria-expanded={catalogOpen}
-                        aria-controls="catalog-accordion"
-                        title="Toggle categories"
-                        className="mb-2 flex w-full items-center justify-center max-w-[320px] gap-3 rounded-md px-3 py-2 hover:bg-richblack-800/40 transition focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      >
-                        <span className="text-sm font-semibold text-richblack-100">Catalog</span>
+            {NavbarLinks.map((item, idx) => {
+              if (item.title === "Courses" || item.title === "Catalog") {
+                return (
+                  <div key={idx} className="space-y-1">
+                    <button
+                      type="button"
+                      onClick={() => setCatalogOpen((prev) => !prev)}
+                      aria-expanded={catalogOpen}
+                      className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
+                        catalogOpen ||
+                        matchRoute("/courses") ||
+                        matchRoute("/courses/*") ||
+                        matchRoute("/catalog/*")
+                          ? "bg-white/10 text-yellow-50 font-semibold"
+                          : "text-richblack-100 hover:bg-white/5 hover:text-white"
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <VscBook className="text-lg text-yellow-50" />
+                        <span>Courses</span>
+                      </div>
+                      <BsChevronDown
+                        className={`text-xs transition-transform duration-200 ${
+                          catalogOpen ? "rotate-180 text-yellow-50" : "text-richblack-400"
+                        }`}
+                      />
+                    </button>
 
-                        <BsChevronDown className={`transform transition-transform ${catalogOpen ? "rotate-180" : "rotate-0"} text-richblack-200`} aria-hidden="true" />
-                      </button>
-
-                      <div id="catalog-accordion" className={`space-y-2 w-full flex flex-col items-center ${catalogOpen ? "" : "hidden"}`}>
+                    {catalogOpen && (
+                      <div className="my-1 ml-5 space-y-1 border-l-2 border-white/10 py-1 pl-4 pr-1">
+                        <Link
+                          to="/courses"
+                          onClick={() => {
+                            setMenuOpen(false);
+                            setCatalogOpen(false);
+                          }}
+                          className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-semibold text-yellow-50 hover:bg-white/5 transition"
+                        >
+                          <span>All Courses</span>
+                          <VscChevronRight className="text-[10px] opacity-60" />
+                        </Link>
                         {loading ? (
-                          <div className="text-xs text-richblack-400 px-1">Loading categories...</div>
+                          <p className="px-2 py-1.5 text-xs text-richblack-400">Loading categories...</p>
                         ) : subLinks.length ? (
                           subLinks
                             .filter((c) => c.courses && c.courses.length > 0)
-                            .map((c, i) => (
+                            .map((c) => (
                               <Link
                                 key={c._id ?? c.name}
-                                to={`/catalog/${c.name.split(" ").join("-").toLowerCase()}`}
+                                to={`/courses?category=${c.name.split(" ").join("-").toLowerCase()}`}
                                 onClick={() => {
                                   setMenuOpen(false);
                                   setCatalogOpen(false);
                                 }}
-                                className="block w-full max-w-[320px] text-center rounded-lg px-4 py-3 text-sm text-richblack-25 hover:bg-richblack-700 transition"
-                                ref={i === 0 ? firstFocusableRef : null}
-                                style={{
-                                  background: "rgba(11,15,20,0.55)",
-                                  border: "1px solid rgba(255,255,255,0.03)",
-                                  backdropFilter: "blur(4px)",
-                                }}
+                                className="flex items-center justify-between rounded-lg px-2.5 py-2 text-xs font-medium text-richblack-200 hover:bg-white/5 hover:text-yellow-50 transition"
                               >
-                                {c.name}
+                                <span>{c.name}</span>
+                                <VscChevronRight className="text-[10px] opacity-60" />
                               </Link>
                             ))
                         ) : (
-                          <div className="text-xs text-richblack-400 px-1">No courses found</div>
+                          <p className="px-2 py-1.5 text-xs text-richblack-400">No courses found</p>
                         )}
                       </div>
-                    </li>
-                  );
-                }
-
-                return (
-                  <li key={idx} className="w-full flex justify-center">
-                    <Link
-                      to={item.path}
-                      onClick={() => setMenuOpen(false)}
-                      className={`w-full max-w-[320px] text-center rounded-lg px-4 py-3 text-sm font-medium transition ${matchRoute(item.path) ? "bg-yellow-900 text-yellow-50" : "bg-richblack-800 text-richblack-25 hover:bg-richblack-700"}`}
-                      style={{
-                        background: "rgba(11,15,20,0.55)",
-                        border: "1px solid rgba(255,255,255,0.03)",
-                        backdropFilter: "blur(4px)",
-                      }}
-                    >
-                      {item.title}
-                    </Link>
-                  </li>
+                    )}
+                  </div>
                 );
-              })}
-            </ul>
+              }
+
+              const isActive = matchRoute(item.path);
+              return (
+                <Link
+                  key={idx}
+                  to={item.path}
+                  onClick={() => setMenuOpen(false)}
+                  className={`flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium transition ${
+                    isActive
+                      ? "border-l-2 border-yellow-50 bg-yellow-50/10 font-semibold text-yellow-50"
+                      : "text-richblack-100 hover:bg-white/5 hover:text-white"
+                  }`}
+                >
+                  <span className={isActive ? "text-yellow-50" : "text-richblack-400"}>
+                    {navIcons[item.title] || <VscHome className="text-lg" />}
+                  </span>
+                  <span>{item.title}</span>
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Account */}
-          <div className="w-full flex flex-col items-center gap-3">
-            <h4 className="mb-3 text-sm font-medium text-richblack-200">Account</h4>
-
-            {!token ? (
-              <>
-                <Link to="/login" onClick={() => setMenuOpen(false)} className="w-full flex justify-center">
-                  <button ref={firstFocusableRef} className="w-full max-w-[320px] rounded-lg px-4 py-3 text-sm font-semibold text-richblack-900 transition" style={{ background: "linear-gradient(90deg,#FFD54A,#FB7185)", boxShadow: "0 8px 20px rgba(251,113,133,0.12)" }}>
-                    Log in
-                  </button>
-                </Link>
-
-                <Link to="/signup" onClick={() => setMenuOpen(false)} className="w-full flex justify-center">
-                  <button className="w-full max-w-[320px] rounded-lg px-4 py-3 text-sm font-semibold text-richblack-25 transition" style={{ background: "rgba(11,15,20,0.55)", border: "1px solid rgba(255,255,255,0.03)", backdropFilter: "blur(4px)" }}>
-                    Sign up
-                  </button>
-                </Link>
-              </>
-            ) : (
-              <>
-                <Link to="/dashboard/my-profile" onClick={() => setMenuOpen(false)} className="w-full flex justify-center ">
-                  <button className="w-full max-w-[320px] rounded-lg px-4 py-3 text-sm font-semibold text-richblack-25 transition flex items-center gap-2 justify-center" style={{ background: "rgba(11,15,20,0.55)", border: "1px solid rgba(255,255,255,0.03)", backdropFilter: "blur(4px)" }}>
-                    <VscAccount /> My Profile
-                  </button>
-                </Link>
-                <div className="w-full flex justify-center">
-                  <button onClick={onLogoutClick} className="w-full max-w-[320px] rounded-lg px-4 py-3 text-sm font-semibold text-white transition" style={{ background: "linear-gradient(90deg,#ef4444,#dc2626)", boxShadow: "0 8px 20px rgba(220,38,38,0.12)" }}>
-                    Logout
-                  </button>
+          {/* Cart item shortcut */}
+          {user && user?.accountType !== "Instructor" && (
+            <div className="border-t border-white/10 pt-3">
+              <Link
+                to="/dashboard/cart"
+                onClick={() => setMenuOpen(false)}
+                className="flex items-center justify-between rounded-xl px-3.5 py-2.5 text-sm font-medium text-richblack-100 hover:bg-white/5 hover:text-white transition"
+              >
+                <div className="flex items-center gap-3">
+                  <AiOutlineShoppingCart className="text-lg text-yellow-50" />
+                  <span>My Cart</span>
                 </div>
-              </>
-            )}
-
-            <div className="mt-6 text-xs text-richblack-400 text-center">
-              <p>
-                Need help?{" "}
-                <Link to="/contact" onClick={() => setMenuOpen(false)} className="text-yellow-300">
-                  Contact us
-                </Link>
-              </p>
+                {totalItems > 0 && (
+                  <span className="rounded-full bg-yellow-50 px-2 py-0.5 text-xs font-bold text-richblack-900">
+                    {totalItems}
+                  </span>
+                )}
+              </Link>
             </div>
-          </div>
+          )}
         </div>
-      </div>
+
+        {/* Drawer Footer Actions */}
+        <div className="border-t border-white/10 bg-richblack-800/50 p-4 space-y-2.5">
+          {token ? (
+            <>
+              <Link
+                to={user?.accountType === "Instructor" ? "/dashboard/instructor" : "/dashboard/enrolled-courses"}
+                onClick={() => setMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-yellow-50 py-2.5 text-sm font-semibold text-richblack-900 shadow-md hover:bg-yellow-100 transition active:scale-[0.98]"
+              >
+                <VscDashboard className="text-lg" />
+                <span>Go to Dashboard</span>
+              </Link>
+
+              <button
+                onClick={onLogoutClick}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 py-2 text-sm font-medium text-red-400 hover:bg-red-500/20 transition active:scale-[0.98]"
+              >
+                <VscSignOut className="text-lg" />
+                <span>Log Out</span>
+              </button>
+            </>
+          ) : (
+            <div className="grid grid-cols-2 gap-2.5">
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="w-full rounded-xl border border-white/15 bg-white/5 py-2.5 text-center text-sm font-semibold text-white hover:bg-white/10 transition"
+              >
+                Log in
+              </Link>
+
+              <Link
+                to="/signup"
+                onClick={() => setMenuOpen(false)}
+                className="w-full rounded-xl bg-yellow-50 py-2.5 text-center text-sm font-semibold text-richblack-900 shadow-md hover:bg-yellow-100 transition"
+              >
+                Sign up
+              </Link>
+            </div>
+          )}
+        </div>
+      </aside>
 
       {/* Confirmation Modal */}
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}

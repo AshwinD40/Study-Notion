@@ -1,28 +1,33 @@
-import toast from 'react-hot-toast';
-import { apiConnector } from '../../../shared/api/client';
-import { catalogData } from '../../../shared/api/endpoints';
+import { apiConnector } from "../../../shared/api/client";
+import { catalogData } from "../../../shared/api/endpoints";
 
-export const getCatalogPageData = async (categoryId) => {
+export const getCatalogPageData = async (categoryId, categoryName) => {
+  let result = null;
 
-  const toastId = toast.loading("Loading...")
-  let result = [];
+  try {
+    const payload = {};
+    if (categoryId) payload.categoryId = categoryId;
+    if (categoryName) payload.categoryName = categoryName;
 
-  try{
-    const response = await apiConnector("POST" , catalogData.CATALOGPAGEDATA_API, {categoryId:categoryId,})
+    const response = await apiConnector(
+      "POST",
+      catalogData.CATALOGPAGEDATA_API,
+      payload
+    );
 
-    if(!response?.data?.success){
-      throw new Error("Could not fetch category page data")
+    if (!response?.data?.success) {
+      throw new Error(
+        response?.data?.message || "Could not fetch category page data"
+      );
     }
     result = response?.data;
-
-  }catch(error){
-     console.log("CATALOG PAGE DATA API ERROR",  error)
-     toast.error(error.message);
-     result = error.response?.data;
+  } catch (error) {
+    console.error("CATALOG PAGE DATA API ERROR", error);
+    result = error.response?.data || {
+      success: false,
+      message: error.message || "Failed to load catalog data",
+    };
   }
 
-  toast.dismiss(toastId);
   return result;
-}
-
-
+};

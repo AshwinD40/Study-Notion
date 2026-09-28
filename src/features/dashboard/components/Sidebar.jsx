@@ -4,7 +4,11 @@ import SidebarLink from "./SidebarLink";
 import { logout } from "../../auth/api/auth.api";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { VscSignOut, VscChevronRight, VscChevronLeft } from "react-icons/vsc";
+import {
+  VscSignOut,
+  VscLayoutSidebarLeft,
+  VscClose,
+} from "react-icons/vsc";
 import ConfirmationModal from "../../../shared/components/ConfirmationModal";
 
 export default function Sidebar() {
@@ -13,25 +17,20 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const [confirmationModal, setConfirmationModal] = useState(null);
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const panelRef = useRef(null);
-  const arrowRef = useRef(null);
 
-  // close mobile panel on outside click / ESC
+  // Close mobile drawer on outside click or ESC
   useEffect(() => {
     function onPointer(e) {
-      if (!open) return;
-      if (
-        panelRef.current &&
-        !panelRef.current.contains(e.target) &&
-        !arrowRef.current?.contains(e.target)
-      ) {
-        setOpen(false);
+      if (!mobileOpen) return;
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setMobileOpen(false);
       }
     }
     function onKey(e) {
-      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Escape") setMobileOpen(false);
     }
     document.addEventListener("pointerdown", onPointer);
     document.addEventListener("keydown", onKey);
@@ -39,11 +38,20 @@ export default function Sidebar() {
       document.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("keydown", onKey);
     };
-  }, [open]);
+  }, [mobileOpen]);
+
+  // Lock body scroll on mobile drawer open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [mobileOpen]);
 
   if (loading) {
     return (
-      <aside className="hidden md:flex min-w-[240px] items-center justify-center border-r border-richblack-700 bg-richblack-900">
+      <aside className="hidden md:flex w-[240px] min-h-[calc(100vh-3.5rem)] items-center justify-center border-r border-white/10 bg-richblack-900">
         <div className="spinner" />
       </aside>
     );
@@ -58,164 +66,165 @@ export default function Sidebar() {
       btn1Handler: () => {
         dispatch(logout(navigate));
         setConfirmationModal(null);
-        setOpen(false);
+        setMobileOpen(false);
       },
       btn2Handler: () => setConfirmationModal(null),
     });
 
   return (
     <>
-      {/* DESKTOP / LAPTOP SIDEBAR */}
+      {/* ========================================================================= */}
+      {/* DESKTOP SIDEBAR (CLEAN SHADCN PATTERN WITH ICONS & NAMES) */}
+      {/* ========================================================================= */}
       <aside
         aria-label="Dashboard sidebar"
-        className=" hidden md:flex  fixed left-0  top-16 w-[240px] h-[calc(100vh-4rem)] flex-col  bg-white/10  backdrop-blur-xl  border-r border-white/10 shadow-[0_20px_60px_rgba(15,23,42,0.8)] px-4 py-6 z-30"
+        className="hidden md:flex fixed left-0 top-14 h-[calc(100vh-3.5rem)] w-[240px] flex-col justify-between border-r border-white/10 bg-richblack-900 p-4 z-30 select-none"
       >
-        {/* scrollable links */}
-        <div className="flex-1 overflow-y-auto pr-1">
-          {sidebarLinks.map((link) => {
-            if (link.type && user?.accountType !== link.type) return null;
-            return (
-              <SidebarLink
-                key={link.id}
-                link={link}
-                iconName={link.icon}
-              />
-            );
-          })}
+        {/* Navigation Sections */}
+        <div className="flex flex-col gap-6 overflow-y-auto pr-1">
+          {/* Workspace Links */}
+          <div className="space-y-1">
+            <p className="px-3 py-1 text-[11px] font-semibold text-richblack-400 uppercase tracking-wider">
+              Workspace
+            </p>
+            <div className="space-y-1">
+              {sidebarLinks.map((link) => {
+                if (link.type && user?.accountType !== link.type) return null;
+                return (
+                  <SidebarLink
+                    key={link.id}
+                    link={link}
+                    iconName={link.icon}
+                  />
+                );
+              })}
+            </div>
+          </div>
 
-          <div className="mt-6 mb-4 h-px w-11/12 bg-white/10 mx-auto" />
-
-          <SidebarLink
-            link={{ name: "Settings", path: "/dashboard/settings" }}
-            iconName="VscSettingsGear"
-          />
+          {/* Preferences Section */}
+          <div className="space-y-1 pt-3 border-t border-white/10">
+            <p className="px-3 py-1 text-[11px] font-semibold text-richblack-400 uppercase tracking-wider">
+              Preferences
+            </p>
+            <SidebarLink
+              link={{ name: "Settings", path: "/dashboard/settings" }}
+              iconName="VscSettingsGear"
+            />
+          </div>
         </div>
 
-        {/* logout at bottom */}
-        <div className="pt-4 border-t border-white/10 mt-2">
+        {/* Bottom: Clean Logout Action */}
+        <div className="pt-3 border-t border-white/10">
           <button
             onClick={askLogout}
-            aria-label="Logout"
-            className="
-              w-full flex items-center justify-center gap-2
-              px-3 py-2 rounded-lg
-              text-[13px] font-semibold tracking-wide
-              bg-gradient-to-r from-red-500/70 to-red-600/70
-              text-white shadow-[0_4px_16px_rgba(220,38,38,0.35)]
-              border border-red-400/30
-              hover:brightness-110 active:scale-[0.97]
-              transition-all
-            "
+            aria-label="Log out"
+            className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-richblack-200 hover:text-red-400 hover:bg-red-500/10 transition active:scale-[0.98]"
           >
-            <VscSignOut className="text-sm" />
-            <span>Logout</span>
+            <VscSignOut className="text-base shrink-0 text-richblack-300" />
+            <span>Log out</span>
           </button>
         </div>
       </aside>
 
-      {/* MOBILE SIDEBAR */}
+      {/* ========================================================================= */}
+      {/* MOBILE STICKY SUB-BAR (INTEGRATED, ZERO OVERLAP) */}
+      {/* ========================================================================= */}
       <div className="md:hidden">
-        {/* toggle button */}
-        <button
-          ref={arrowRef}
-          onClick={() => setOpen((s) => !s)}
-          aria-expanded={open}
-          aria-controls="mobile-sidebar-panel"
-          aria-label={open ? "Close menu" : "Open menu"}
-          className="fixed left-0 top-20 z-50 w-8 h-8  rounded-full  flex items-center justify-center  bg-white/20  border border-white/20  backdrop-blur-md  shadow-md transition-transform duration-200 hover:scale-105"
-        >
-          <span className="text-white text-base leading-none  ">
-            {open ? <VscChevronLeft /> : <VscChevronRight />}
-          </span>
-        </button>
+        {/* Clean Sticky Sub-Header Bar */}
+        <div className="fixed top-14 left-0 right-0 z-20 flex h-11 items-center justify-between border-b border-white/10 bg-richblack-900/95 backdrop-blur-md px-4">
+          <button
+            onClick={() => setMobileOpen(true)}
+            aria-label="Open sidebar menu"
+            className="flex items-center gap-2 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-xs font-medium text-richblack-100 hover:bg-white/10 hover:text-white transition active:scale-95"
+          >
+            <VscLayoutSidebarLeft className="text-sm text-yellow-50" />
+            <span>Menu</span>
+          </button>
 
-        {/* slide-out panel */}
+          <span className="text-xs font-medium text-richblack-400">
+            Dashboard
+          </span>
+        </div>
+
+        {/* Mobile Backdrop */}
+        <div
+          className={`fixed inset-0 z-40 bg-black/70 backdrop-blur-sm transition-opacity duration-300 ${
+            mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+          onClick={() => setMobileOpen(false)}
+          aria-hidden={!mobileOpen}
+        />
+
+        {/* Mobile Compact Left Sheet Drawer */}
         <div
           id="mobile-sidebar-panel"
           ref={panelRef}
-          className={`
-            fixed left-0 top-0 z-40 
-            h-full 
-            p-3 pt-16
-            transform transition-transform duration-200
-            ${open ? "translate-x-0" : "-translate-x-full"}
-            w-[min(80vw,260px)]
-          `}
-          style={{
-            background:
-              "linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06))",
-            borderRight: "1px solid rgba(255,255,255,0.18)",
-            backdropFilter: "blur(14px) saturate(130%)",
-            WebkitBackdropFilter: "blur(14px) saturate(130%)",
-            boxShadow: "0 18px 50px rgba(2,6,23,0.8)",
-          }}
+          className={`fixed inset-y-0 left-0 z-50 flex h-full w-72 max-w-[85vw] flex-col justify-between border-r border-white/10 bg-richblack-900 p-5 shadow-2xl transition-transform duration-300 ease-out ${
+            mobileOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+          onPointerDown={(e) => e.stopPropagation()}
         >
-          <div className="mb-4 px-1 text-center">
-            <div className="text-sm uppercase tracking-[0.2em] text-white/60">
-              Dashboard
+          {/* Header */}
+          <div>
+            <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-5">
+              <span className="text-sm font-semibold text-white">Dashboard</span>
+              <button
+                onClick={() => setMobileOpen(false)}
+                aria-label="Close menu"
+                className="flex h-7 w-7 items-center justify-center rounded-md border border-white/10 bg-white/5 text-richblack-300 hover:bg-white/10 hover:text-white transition"
+              >
+                <VscClose className="text-base" />
+              </button>
             </div>
-            <div className="text-lg font-semibold text-white">Menu</div>
+
+            {/* Links List */}
+            <div className="space-y-5 overflow-y-auto max-h-[calc(100vh-180px)]">
+              <div className="space-y-1">
+                <p className="px-3 py-1 text-[11px] font-semibold text-richblack-400 uppercase tracking-wider">
+                  Workspace
+                </p>
+                <div className="space-y-1">
+                  {sidebarLinks.map((link) => {
+                    if (link.type && user?.accountType !== link.type) return null;
+                    return (
+                      <SidebarLink
+                        key={link.id}
+                        link={link}
+                        iconName={link.icon}
+                        onClick={() => setMobileOpen(false)}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="space-y-1 pt-3 border-t border-white/10">
+                <p className="px-3 py-1 text-[11px] font-semibold text-richblack-400 uppercase tracking-wider">
+                  Preferences
+                </p>
+                <SidebarLink
+                  link={{ name: "Settings", path: "/dashboard/settings" }}
+                  iconName="VscSettingsGear"
+                  onClick={() => setMobileOpen(false)}
+                />
+              </div>
+            </div>
           </div>
 
-          <nav
-            className="flex flex-col gap-2 overflow-auto"
-            style={{ maxHeight: "calc(100vh - 260px)" }}
-          >
-            {sidebarLinks.map((link) => {
-              if (link.type && user?.accountType !== link.type) return null;
-              return (
-                <div
-                  key={link.id}
-                  onClick={() => setOpen(false)}
-                  className="px-1"
-                >
-                  <SidebarLink
-                    link={link}
-                    iconName={link.icon}
-                    showLabel={true}
-                  />
-                </div>
-              );
-            })}
-
-            <div className="mt-4 h-px w-full bg-white/15" />
-
-            <div onClick={() => setOpen(false)} className="px-1 mt-2">
-              <SidebarLink
-                link={{ name: "Settings", path: "/dashboard/settings" }}
-                iconName="VscSettingsGear"
-                showLabel={true}
-              />
-            </div>
-          </nav>
-
-          <div className="mt-5 flex flex-col gap-3 px-1">
+          {/* Bottom Logout */}
+          <div className="border-t border-white/10 pt-3">
             <button
-              onClick={() => {
-                askLogout();
-                setOpen(false);
-              }}
-              className=" w-full  flex items-center gap-3  rounded-xl  px-4 py-2.5  text-sm font-semibold  text-white  bg-gradient-to-r from-red-500 to-red-600 shadow-[0_10px_30px_rgba(220,38,38,0.45)] hover:brightness-110 transition "
+              onClick={askLogout}
+              className="flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-medium text-richblack-200 hover:text-red-400 hover:bg-red-500/10 transition"
             >
-              <VscSignOut className="text-lg" />
-              Logout
+              <VscSignOut className="text-base shrink-0 text-richblack-300" />
+              <span>Log out</span>
             </button>
           </div>
         </div>
-
-        {/* backdrop */}
-        <div
-          className={`
-            fixed inset-0 z-30 
-            bg-black/40 
-            transition-opacity
-            ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
-          `}
-          onClick={() => setOpen(false)}
-          aria-hidden={!open}
-        />
       </div>
 
+      {/* Confirmation Modal */}
       {confirmationModal && <ConfirmationModal modalData={confirmationModal} />}
     </>
   );

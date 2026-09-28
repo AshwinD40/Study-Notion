@@ -1,5 +1,6 @@
 const { contactUsEmail } = require("../mail/template/contactFormRes");
 const mailSender = require("../utils/mailSender");
+const Contact = require("../models/Contact");
 
 function isValidEmail(value) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -16,17 +17,15 @@ function escapeHtml(value) {
 
 exports.contactUsController = async (req, res) => {
   try {
+    const rawName = req.body.name || `${req.body.firstname || ""} ${req.body.lastname || ""}`;
+    const name = String(rawName).trim();
     const email = String(req.body?.email || "").trim().toLowerCase();
-    const firstname = String(req.body?.firstname || "").trim();
-    const lastname = String(req.body?.lastname || "").trim();
     const message = String(req.body?.message || "").trim();
-    const phoneNo = String(req.body?.phoneNo || "").trim();
-    const countrycode = String(req.body?.countrycode || "").trim();
 
-    if (!email || !firstname || !message || !phoneNo || !countrycode) {
+    if (!name || !email || !message) {
       return res.status(400).json({
         success: false,
-        message: "Please fill all required fields",
+        message: "Please fill all required fields (name, email, and message)",
       });
     }
 
@@ -37,60 +36,81 @@ exports.contactUsController = async (req, res) => {
       });
     }
 
-    const userMail = await mailSender(
+    // 1. Persist the message in MongoDB so no inquiry is ever lost
+    const savedContact = await Contact.create({
+      name,
       email,
-      "We received your message",
-      contactUsEmail(email, firstname, lastname, message, phoneNo, countrycode)
-    );
+      message,
+    });
 
-    if (!userMail.success) {
-      console.error("[contactUs] acknowledgment email failed:", userMail.error);
-      return res.status(502).json({
-        success: false,
-        message: "Failed to send confirmation email",
-      });
+    console.log(`[contactUs] New contact message saved in database with ID: ${savedContact._id}`);
+
+    // 2. Send acknowledgment email to the submitter
+    let userEmailSent = false;
+    try {
+      const userMail = await mailSender(
+        email,
+        "We received your message - StudyNotion",
+        contactUsEmail(email, name, message)
+      );
+      userEmailSent = !!userMail?.success;
+      if (!userEmailSent) {
+        console.warn("[contactUs] User acknowledgment email failed:", userMail?.error?.message || userMail);
+      }
+    } catch (err) {
+      console.warn("[contactUs] User acknowledgment mail error:", err.message);
     }
 
-    // Optional internal copy to support inbox (defaults to configured sender account).
+    // 3. Send notification to admin / support inbox
     const supportInbox = String(
       process.env.CONTACT_US_RECEIVER_EMAIL || process.env.MAIL_USER || ""
     )
       .trim()
       .toLowerCase();
 
-    if (supportInbox && supportInbox !== email) {
-      const safeName = `${escapeHtml(firstname)} ${escapeHtml(lastname)}`.trim();
-      const adminHtml = `
-        <h2>New Contact Us Submission</h2>
-        <p><strong>Name:</strong> ${safeName || "N/A"}</p>
-        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Phone:</strong> ${escapeHtml(countrycode)} ${escapeHtml(
-        phoneNo
-      )}</p>
-        <p><strong>Message:</strong></p>
-        <p>${escapeHtml(message)}</p>
-      `;
+    let adminEmailSent = false;
+    if (supportInbox) {
+      try {
+        const safeName = escapeHtml(name);
+        const adminHtml = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px;">
+            <h2 style="color: #FFD60A; background: #000814; padding: 12px 16px; border-radius: 6px; margin-top: 0;">New Contact Form Submission</h2>
+            <p><strong>Name:</strong> ${safeName}</p>
+            <p><strong>Email:</strong> <a href="mailto:${escapeHtml(email)}">${escapeHtml(email)}</a></p>
+            <p><strong>Message:</strong></p>
+            <div style="background: #f4f4f5; padding: 12px; border-radius: 6px; white-space: pre-wrap;">${escapeHtml(message)}</div>
+            <p style="font-size: 11px; color: #888; margin-top: 20px;">StudyNotion Platform Notification</p>
+          </div>
+        `;
 
-      const supportMail = await mailSender(
-        supportInbox,
-        `New contact request from ${firstname}${lastname ? ` ${lastname}` : ""}`,
-        adminHtml
-      );
-
-      if (!supportMail.success) {
-        console.warn("[contactUs] support copy failed:", supportMail.error);
+        const supportMail = await mailSender(
+          supportInbox,
+          `New Contact Inquiry from ${name}`,
+          adminHtml
+        );
+        adminEmailSent = !!supportMail?.success;
+        if (!adminEmailSent) {
+          console.warn("[contactUs] Admin notification email failed:", supportMail?.error?.message || supportMail);
+        }
+      } catch (err) {
+        console.warn("[contactUs] Admin notification mail error:", err.message);
       }
     }
 
     return res.status(200).json({
       success: true,
-      message: "Message sent successfully",
+      message: "Your message has been sent successfully! Our team will contact you soon.",
+      data: {
+        id: savedContact._id,
+        userEmailSent,
+        adminEmailSent,
+      },
     });
   } catch (error) {
-    console.error("[contactUs] error:", error);
+    console.error("[contactUs] Error handling contact form:", error);
     return res.status(500).json({
       success: false,
-      message: "Something went wrong while sending your message",
+      message: "Something went wrong while sending your message. Please try again.",
     });
   }
 };

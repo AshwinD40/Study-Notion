@@ -6,6 +6,7 @@ const SubSection = require('../models/SubSection');
 const User = require('../models/User');
 const { uploadImageToCloudinary } = require('../utils/imageUploader');
 const CourseProgress = require('../models/CourseProgress')
+require('../models/RatingAndReview')
 const { convertSecondsToDuration } = require("../utils/secToDuration")
 
 // create course
@@ -206,18 +207,11 @@ exports.editCourse = async (req, res) => {
 
 exports.getAllCourses = async (req, res) => {
   try {
-    // fetch all courses
-    const allCourses = await Course.find(
-      { status: "Published" },
-      {
-        courseName: true,
-        thumbnail: true,
-        price: true,
-        instructor: true,
-        ratingAndReview: true,
-        studentsEnrolls: true,
-
-      }).populate("Instructor")
+    const allCourses = await Course.find({ status: "Published" })
+      .populate("instructor", "firstName lastName email image")
+      .populate("category", "name description")
+      .populate("ratingAndReview")
+      .sort({ createdAt: -1 })
       .exec();
 
     return res.status(200).json({
@@ -225,17 +219,15 @@ exports.getAllCourses = async (req, res) => {
       message: "All courses fetched successfully",
       data: allCourses,
     });
-
-  }
-  catch (error) {
-    console.log(error);
+  } catch (error) {
+    console.error("getAllCourses error:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to get all courses",
       error: error.message,
-    })
+    });
   }
-}
+};
 
 // getCourseDetails
 exports.getCourseDetails = async (req, res) => {
