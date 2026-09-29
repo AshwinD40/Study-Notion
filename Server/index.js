@@ -84,7 +84,6 @@ async function startServer() {
     await database.connect();
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
-        console.log("--- SERVER RESTARTED AT " + new Date().toISOString() + " [FORCE RESTART] ---");
     });
 }
 

@@ -43,8 +43,6 @@ exports.contactUsController = async (req, res) => {
       message,
     });
 
-    console.log(`[contactUs] New contact message saved in database with ID: ${savedContact._id}`);
-
     // 2. Send acknowledgment email to the submitter
     let userEmailSent = false;
     try {

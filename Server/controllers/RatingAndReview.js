@@ -53,7 +53,6 @@ exports.createRating = async (req, res) =>{
                                      },
                                      {new:true}
         );
-        console.log(updatedCourseDetails);
 
         // return res
         return res.status(200).json({
@@ -64,7 +63,7 @@ exports.createRating = async (req, res) =>{
 
     }
     catch(error){
-        console.log(error);
+        console.error("Create rating error:", error);
         return res.status(500).json({   
             success:false,
             message: "Internal server error",
@@ -114,7 +113,7 @@ exports.getAverageRating = async (req , res)=>{
         })
     }
     catch(error){
-        console.log(error);
+        console.error("Get average rating error:", error);
         return res.status(500).json({   
             success:false,
             message: "Internal server error",
@@ -147,7 +146,7 @@ exports.getAllRating = async (req, res) =>{
         });
     }
     catch(err){
-        console.log(err);
+        console.error("Get all ratings error:", err);
         return res.status(500).json({   
             success:false,
             message: "Internal server error",

@@ -33,9 +33,6 @@ exports.createCourse = async (req, res) => {
     const tag = JSON.parse(_tag)
     const instructions = JSON.parse(_instructions);
 
-    console.log("tag", tag)
-    console.log("instructions", instructions)
-
     // velidaition
     if (
       !courseName ||
@@ -113,7 +110,7 @@ exports.createCourse = async (req, res) => {
       data: newCourse,
     });
   } catch (error) {
-    console.log(error);
+    console.error("Create course error:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to create course",
@@ -126,7 +123,6 @@ exports.createCourse = async (req, res) => {
 // Edit Course Details
 exports.editCourse = async (req, res) => {
   try {
-    console.log("EDIT COURSE CALLED")
     const { courseId } = req.body
     const updates = req.body
     const course = await Course.findById(courseId)
@@ -137,7 +133,6 @@ exports.editCourse = async (req, res) => {
 
     // If Thumbnail Image is found, update it
     if (req.files) {
-      console.log("thumbnail update")
       const thumbnail = req.files.thumbnailImage
       const thumbnailImage = await uploadImageToCloudinary(
         thumbnail,
@@ -316,8 +311,6 @@ exports.getFullCourseDetails = async (req, res) => {
       userId: userId,
     })
 
-    console.log("courseProgressCount : ", courseProgressCount)
-
     if (!courseDetails) {
       return res.status(400).json({
         success: false,
@@ -420,8 +413,6 @@ exports.getInstructorCourses = async (req, res) => {
 // Delete the Course
 exports.deleteCourse = async (req, res) => {
   try {
-    console.log("DELETE COURSE BODY:", req.body)
-
     const { courseId } = req.body
 
     if (!courseId) {
@@ -431,13 +422,10 @@ exports.deleteCourse = async (req, res) => {
       })
     }
 
-    console.log("DELETE COURSE ID:", courseId)
-
     // Find the course
     const course = await Course.findById(courseId)
 
     if (!course) {
-      console.log("COURSE NOT FOUND FOR ID:", courseId)
       return res.status(404).json({
         success: false,
         message: "Course not found"

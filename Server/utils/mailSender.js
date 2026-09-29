@@ -49,15 +49,6 @@ function withTimeout(promise, timeoutMs, operation) {
   });
 }
 
-// Debug logging for email config (remove in production)
-console.log("[mailSender] Config:", {
-  host,
-  port,
-  user,
-  passLength: pass ? pass.length : 0,
-  passConfigured: !!pass,
-});
-
 if (!user || !pass) {
   console.error("[mailSender] MAIL_USER / MAIL_PASS missing");
 }

@@ -174,7 +174,7 @@ exports.signup = async (req, res) => {
     })
   }
   catch (error) {
-    console.log(error);
+    console.error("User registration error:", error.message || error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong , User cannot registerd",
@@ -240,7 +240,7 @@ exports.login = async (req, res) => {
       message: "Loged In successfully",
     })
   } catch (error) {
-    console.log(error);
+    console.error("Login error:", error.message || error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong ,Please try again later",
@@ -309,7 +309,7 @@ exports.sendotp = async (req, res) => {
       ...(includeDebugOtp ? { debugOtp: otp } : {}),
     });
   } catch (error) {
-    console.log(error.message);
+    console.error("Send OTP error:", error.message || error);
     return res.status(500).json({
       success: false,
       message: "Could not send OTP",
@@ -387,7 +387,7 @@ exports.changedPassword = async (req, res) => {
       message: "Password updated successfully",
     });
   } catch (error) {
-    console.log("Error occurred while updating password", error);
+    console.error("Error occurred while updating password:", error.message || error);
     return res.status(500).json({
       success: false,
       message: "Something went wrong while updating password",

@@ -34,19 +34,16 @@ async function sendVerificationEmail(email, otp) {
 
 	// Send the email
 	try {
-		console.log("OTP Model: Sending verification email to", email);
 		const mailResponse = await mailSender(
 			email,
 			"StudyNotion — Email Verification Code",
 			emailTemplate(otp)
 		);
-		console.log("OTP Model: Mail response received", mailResponse);
 		if (!mailResponse.success) {
 			throw new Error(mailResponse.error ? mailResponse.error.message : "Email sending failed");
 		}
-		console.log("Email sent successfully:", mailResponse.info?.messageId || "ok");
 	} catch (error) {
-		console.log("Error occurred while sending email: ", error);
+		console.error("Error occurred while sending verification email:", error.message || error);
 		throw error;
 	}
 }

@@ -7,7 +7,6 @@ const {convertSecondsToDuration} = require("../utils/secToDuration")
 
 exports.updateProfile = async (req, res) => {
   try {
-    console.log("Update Profile Request Body:", req.body);
     const { dateOfBirth = "", about = "", contactNumber, gender } = req.body;
     const id = req.user.id;
 
@@ -40,7 +39,7 @@ exports.updateProfile = async (req, res) => {
       updatedUserDetails: updatedUser,
     });
   } catch (error) {
-    console.log("Update Profile Error:", error.message);
+    console.error("Update Profile Error:", error.message || error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -79,7 +78,7 @@ exports.deleteAccount = async (req, res) =>{
 
     }
     catch(error){
-        console.log(error.message);
+        console.error("Delete account error:", error.message || error);
         return res.status(500).json({
             success:false,
             message:"Sorry Account is not deleted, please try again later",
@@ -98,7 +97,6 @@ exports.getAllUserDetails = async (req, res) =>{
         const userDetails = await User.findById(id)
         .populate("additionalDetails")
         .exec();
-        console.log(userDetails);
         // return res
         return res.status(200).json({
             success:true,
@@ -107,7 +105,7 @@ exports.getAllUserDetails = async (req, res) =>{
         })
     }
     catch(error){
-        console.log(error.message);
+        console.error("Get user details error:", error.message || error);
         return res.status(500).json({
             success:false,
             message:"Server error",
@@ -126,7 +124,6 @@ exports.updateDisplayPicture = async (req, res) =>{
             1000,
             1000
         )
-        console.log(image)
         const updateProfile = await User.findByIdAndUpdate(
             {_id:userId},
             {image : image.secure_url},

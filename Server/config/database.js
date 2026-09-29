@@ -83,8 +83,7 @@ exports.connect = async () => {
     await connectWithDnsFallback(mongoUrl, getMongoOptions());
     console.log("DB connected Successfully");
   } catch (err) {
-    console.log("DB connection failed");
-    console.log(err);
+    console.error("DB connection failed:", err);
     process.exit(1);
   }
 };

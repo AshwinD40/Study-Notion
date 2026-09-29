@@ -18,14 +18,12 @@ exports.createSubSection = async (req , res) => {
                 message : "Please fill all the fields" 
             })
         }
-        console.log(video)
 
         // upload video to cloudinary
         const uploadDetails = await uploadImageToCloudinary(
             video, 
             process.env.FOLDER_NAME
         )
-        console.log(uploadDetails)
 
         // create subsection
         const SubSectionDetails = await SubSection.create({
@@ -52,7 +50,7 @@ exports.createSubSection = async (req , res) => {
         })
     }
     catch(error){
-        console.log("error creating new subsection",error);
+        console.error("Error creating new subsection:", error);
         return res.status(500).json({
             success:false,
             message:"SubSection not created yet , try again",
@@ -105,7 +103,7 @@ exports.updateSubSection = async (req, res) =>{
         });
     }
     catch(error){
-        console.log( error);
+        console.error("Error updating subsection:", error);
         return res.status(500).json({
             success:false,
             message:"Internal server error",
@@ -146,7 +144,7 @@ exports.deleteSubSection = async (req, res) =>{
         });
     }
     catch(error){
-        console.log(error);
+        console.error("Error deleting subsection:", error);
         return res.status(500).json({
             success:false,
             message:"Internal server error",
